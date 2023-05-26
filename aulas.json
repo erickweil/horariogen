@@ -1,0 +1,232 @@
+{
+	"turmas": [
+		{
+			"nome": "Turma 2023",
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{
+			"nome": "Turma 2022",
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[],
+				"qui":[],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{
+			"nome": "Turma 2021",
+			"horarios": {
+				"dom":[],
+				"seg":[],
+				"ter":[],
+				"qua":[],
+				"qui":[],
+				"sex":[],
+				"sab":[]
+			}
+		}
+	],
+	"disciplinas": [
+		{ 
+			"nome":"Fundamentos de Tecnologia da Informação",
+			"turma": "Turma 2023",
+			"aulas": 2
+		},
+		{ 
+			"nome":"Organização de Computadores",
+			"turma": "Turma 2023",
+			"aulas": 2
+		},
+		{ 
+			"nome":"Algoritmos e Lógica de Programação",
+			"turma": "Turma 2023",
+			"aulas": 4
+		},
+		{ 
+			"nome":"Banco de Dados I",
+			"turma": "Turma 2023",
+			"aulas": 4
+		},
+		{ 
+			"nome":"Fundamentos em Negócios",
+			"turma": "Turma 2023",
+			"aulas": 2
+		},
+		{ 
+			"nome":"Relações Étnico-Raciais",
+			"turma": "Turma 2023",
+			"aulas": 2
+		},
+		{ 
+			"nome":"Matemática Computacional",
+			"turma": "Turma 2023",
+			"aulas": 4
+		},
+		{
+			"nome":"Orientação a objetos",
+			"turma": "Turma 2022",
+			"aulas": 4
+		},
+		{
+			"nome":"Devops e Cloud I",
+			"turma": "Turma 2022",
+			"aulas": 2
+		},
+		{
+			"nome":"Estrutura de dados I",
+			"turma": "Turma 2022",
+			"aulas": 2
+		}
+	],
+	"professores": [
+		{ 
+			"nome":"Roberto",
+			"disciplinas": [
+				"Fundamentos de Tecnologia da Informação",
+				"Organização de Computadores"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Erick",
+			"disciplinas": [
+				"Devops e Cloud I",
+				"Estrutura de dados I"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Lucas",
+			"disciplinas": [
+				"Algoritmos e Lógica de Programação",
+				"Orientação a objetos"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Wesley",
+			"disciplinas": [
+				"Banco de Dados I"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Gilberto",
+			"disciplinas": [
+				
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Marco",
+			"disciplinas": [
+				
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Valéria",
+			"disciplinas": [
+				"Fundamentos em Negócios"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Rosa",
+			"disciplinas": [
+				"Relações Étnico-Raciais"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Edilberto",
+			"disciplinas": [
+				"Matemática Computacional"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		}
+	]
+}

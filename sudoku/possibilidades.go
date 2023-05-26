@@ -25,9 +25,9 @@ func (possibs *Possib) receber(outro *Possib) {
 	}
 }
 
-func (possibs *Possib) resetar() {
+func (possibs *Possib) resetar(valor bool) {
 	for i := 0; i < len(possibs.p); i++{
-		possibs.p[i] = true
+		possibs.p[i] = valor
 	}
 }
 
@@ -82,7 +82,7 @@ func obterMelhorPossib(quadro []int, nPossibs int, regrasfn RegrasQuadro) (*Poss
 
 	for index := 0; index < len(quadro); index++ {
 		if quadro[index] != 0 { continue } // se já foi escolhido ignora
-		p.resetar()
+		p.resetar(true)
 		p.index = index
 		
 		regrasfn(quadro,p)
@@ -155,20 +155,6 @@ func solucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, 
 	}
 	// A ideia é obter o quadrado com menor entropia
 	// isto é, que possui a menor quantidade de escolhas possíveis
-
-	// NÃO FAZ SENTIDO FAZER ISSO
-	/*var quadro_possib = iniciarPossib(quadro,nPossibs)
-	atualizarQuadroPossib(quadro,quadro_possib,regrasfn)
-	
-	// Encontrar o quadrado com menos possíveis valores
-	// Depois: em vez de ordenar o array inteiro, ordenar 1 a 1, considerando que nem sempre atravessará tudo
-	sort.Slice(quadro_possib, func(i,j int) bool {
-		a := &quadro_possib[i]
-		b := &quadro_possib[j]
-
-		return a.contar() < b.contar()
-	})*/
-
 	p, err := obterMelhorPossib(quadro,nPossibs,regrasfn)
 
 	if err != nil {
@@ -176,45 +162,27 @@ func solucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, 
 		return results		
 	}
 
-	//for i := 0; i < len(quadro_possib); i++ {
-	//	p := &quadro_possib[i]
-
-		// Quadro impossível
-		//if p.contar() <= 0 {
-		//	return results
-		//}
-
-		// Uma vez escolhido o quadrado a partir do qual continuar,
-		// testa cada possibilidade deste quadrado
-		//solucoes := len(results)
-		for k := 0; k < len(p.p); k++ {
-		//for k := len(p.p)-1; k >= 0; k-- {
-			// Se é possível colocar o valor k neste quadrado
-			if p.p[k] { 
-				quadro[p.index] = k+1
-				// Se com essa escolha já solucionou, adiciona o quadro resolvido nos resultados
-				if checarSolucionado(quadro) {
-					quadroCopia := make([]int, len(quadro))
-					for q := 0; q < len(quadro); q++ {
-						quadroCopia[q] = quadro[q]
-					}
-					fmt.Println("\nSolucionado! iter:",iter,"\n",quadroCopia)
-					results = append(results, quadroCopia)
-				} else {
-					// Se não está solucionado, tenta solucionar com mais escolhas depois dessa
-					results = solucionarQuadroSemParar(quadro,nPossibs,regrasfn,results)
+	for k := 0; k < len(p.p); k++ {
+	//for k := len(p.p)-1; k >= 0; k-- {
+		// Se é possível colocar o valor k neste quadrado
+		if p.p[k] { 
+			quadro[p.index] = k+1
+			// Se com essa escolha já solucionou, adiciona o quadro resolvido nos resultados
+			if checarSolucionado(quadro) {
+				quadroCopia := make([]int, len(quadro))
+				for q := 0; q < len(quadro); q++ {
+					quadroCopia[q] = quadro[q]
 				}
-				// Remove a escolha para tentar outras possibilidades
-				quadro[p.index] = 0
+				results = append(results, quadroCopia)
+				fmt.Println("Solucionado! iter:",iter," Soluções:",len(results))
+			} else {
+				// Se não está solucionado, tenta solucionar com mais escolhas depois dessa
+				results = solucionarQuadroSemParar(quadro,nPossibs,regrasfn,results)
 			}
+			// Remove a escolha para tentar outras possibilidades
+			quadro[p.index] = 0
 		}
-		
-		// Nenhuma escolha foi válida para este quadrado, ou seja, é ímpossível solucionar nesta configuração
-		//if solucoes == len(results) {
-		//	return results
-		//}
-	//}
-
+	}
 	// retorna os resultados encontrados
 	return results
 }

@@ -73,7 +73,7 @@ func regrasSudoku(quadro []int, possibs *Possib) {
 	}
 }
 
-func Exec() {
+func ExecSudoku() {
 	fmt.Println("Sudoku")
 
 	var quadro = []int{

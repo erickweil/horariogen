@@ -10,5 +10,5 @@ import (
 func main() {
 	fmt.Println("OK")
 
-	sudoku.Exec()
+	sudoku.ExecHorario()
 }
