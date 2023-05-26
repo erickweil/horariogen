@@ -11,4 +11,5 @@ func main() {
 	fmt.Println("OK")
 
 	sudoku.ExecHorario()
+	//sudoku.ExecSudoku()
 }

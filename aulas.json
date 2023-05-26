@@ -18,9 +18,9 @@
 				"dom":[],
 				"seg":[1,2,3,4],
 				"ter":[1,2,3,4],
-				"qua":[],
-				"qui":[],
-				"sex":[],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
 				"sab":[]
 			}
 		},
@@ -28,11 +28,11 @@
 			"nome": "Turma 2021",
 			"horarios": {
 				"dom":[],
-				"seg":[],
-				"ter":[],
-				"qua":[],
-				"qui":[],
-				"sex":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
 				"sab":[]
 			}
 		}
@@ -41,52 +41,128 @@
 		{ 
 			"nome":"Fundamentos de Tecnologia da Informação",
 			"turma": "Turma 2023",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Organização de Computadores",
 			"turma": "Turma 2023",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Algoritmos e Lógica de Programação",
 			"turma": "Turma 2023",
-			"aulas": 4
+			"aulas": 4,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Banco de Dados I",
 			"turma": "Turma 2023",
-			"aulas": 4
+			"aulas": 4,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Fundamentos em Negócios",
 			"turma": "Turma 2023",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Relações Étnico-Raciais",
 			"turma": "Turma 2023",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
 		},
 		{ 
 			"nome":"Matemática Computacional",
 			"turma": "Turma 2023",
-			"aulas": 4
+			"aulas": 4,
+			"agrupar": 2
 		},
 		{
 			"nome":"Orientação a objetos",
 			"turma": "Turma 2022",
-			"aulas": 4
+			"aulas": 4,
+			"agrupar": 2
 		},
 		{
 			"nome":"Devops e Cloud I",
 			"turma": "Turma 2022",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
 		},
 		{
 			"nome":"Estrutura de dados I",
 			"turma": "Turma 2022",
-			"aulas": 2
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Programação Web: front-end",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Programação Web: back-end",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Teste de Software I",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Fábrica de Software II",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 4
+		},
+		{
+			"nome":"Devops e Cloud II",
+			"turma": "Turma 2021",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Estrutura de dados II",
+			"turma": "Turma 2021",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Web Services",
+			"turma": "Turma 2021",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Frameworks para front-end",
+			"turma": "Turma 2021",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Fábrica de Software III",
+			"turma": "Turma 2021",
+			"aulas": 4,
+			"agrupar": 4
+		},
+		{
+			"nome":"Estatística",
+			"turma": "Turma 2021",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Teste de Software II",
+			"turma": "Turma 2021",
+			"aulas": 2,
+			"agrupar": 2
 		}
 	],
 	"professores": [
@@ -94,7 +170,8 @@
 			"nome":"Roberto",
 			"disciplinas": [
 				"Fundamentos de Tecnologia da Informação",
-				"Organização de Computadores"
+				"Organização de Computadores",
+				"Fábrica de Software II"
 			],
 			"horarios": {
 				"dom":[],
@@ -110,7 +187,11 @@
 			"nome":"Erick",
 			"disciplinas": [
 				"Devops e Cloud I",
-				"Estrutura de dados I"
+				"Estrutura de dados I",
+				"Devops e Cloud II",
+				"Estrutura de dados II",
+				"Fábrica de Software II",
+				"Fábrica de Software III"
 			],
 			"horarios": {
 				"dom":[],
@@ -141,7 +222,10 @@
 		{ 
 			"nome":"Wesley",
 			"disciplinas": [
-				"Banco de Dados I"
+				"Banco de Dados I",
+				"Teste de Software I",
+				"Fábrica de Software III",
+				"Teste de Software II"
 			],
 			"horarios": {
 				"dom":[],
@@ -156,22 +240,26 @@
 		{ 
 			"nome":"Gilberto",
 			"disciplinas": [
-				
+				"Programação Web: back-end",
+				"Fábrica de Software II",
+				"Web Services",
+				"Fábrica de Software III"
 			],
 			"horarios": {
 				"dom":[],
 				"seg":[],
-				"ter":[1,2,3,4],
-				"qua":[1,2,3,4],
-				"qui":[1,2,3,4],
-				"sex":[1,2,3,4],
+				"ter":[2,3,4],
+				"qua":[2,3,4],
+				"qui":[2,3,4],
+				"sex":[2,3,4],
 				"sab":[]
 			}
 		},
 		{ 
 			"nome":"Marco",
 			"disciplinas": [
-				
+				"Programação Web: front-end",
+				"Frameworks para front-end"
 			],
 			"horarios": {
 				"dom":[],
@@ -216,7 +304,8 @@
 		{ 
 			"nome":"Edilberto",
 			"disciplinas": [
-				"Matemática Computacional"
+				"Matemática Computacional",
+				"Estatística"
 			],
 			"horarios": {
 				"dom":[],

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -41,17 +42,29 @@ func (h *Horario) setHorarioDia(dia int, tempos []int) {
 
 func (h *Horario) expandirTempos(nTempos int) {
 	for dia := 0; dia < 7; dia++ {
-		hDia := h.getHorarioDia(dia)
 		temposExpandido := make([]int, nTempos)
-		for i :=0; i < len(hDia); i++ { 
-			temposExpandido[hDia[i]-1] = 1
+		hDia := h.getHorarioDia(dia)
+		if hDia != nil {
+			for i :=0; i < len(hDia); i++ { 
+				temposExpandido[hDia[i]-1] = 1
+			}
 		}
 		h.setHorarioDia(dia,temposExpandido)
 	}
 }
 
+func (h *Horario) copiar(outro *Horario) {
+	for dia := 0; dia < 7; dia++ {
+		hDia := h.getHorarioDia(dia)
+		oDia := outro.getHorarioDia(dia)
+		for i :=0; i < len(hDia); i++ { 
+			hDia[i] = oDia[i]
+		}
+	}
+}
+
 func (h *Horario) possui(dia int, tempo int) bool {
-	return  h.getHorarioDia(dia)[tempo] == 1
+	return  h.getHorarioDia(dia)[tempo] != 0
 }
 
 func (h *Horario) getMaxTempo() int {
@@ -68,6 +81,9 @@ type Professor struct {
 	Nome string				`json:"nome"`
 	Disciplinas []string	`json:"disciplinas"`
 	Horarios Horario		`json:"horarios"`
+
+	// cache
+	matriz Horario	`json:"-"` 
 }
 
 type Turma struct {
@@ -82,7 +98,11 @@ type Disciplina struct {
 	idTurma int			`json:"-"`
 	Turma string		`json:"turma"`
 	Aulas int			`json:"aulas"`
+	Agrupar int			`json:"agrupar"`
 	Nome string			`json:"nome"`
+
+	// cache
+	contAulas int	`json:"-"`
 }
 
 func (d *Disciplina) possuiProfessor(prof int) bool {
@@ -178,6 +198,7 @@ func loadJson(caminho string) error {
 			d.idProfessores = append(d.idProfessores, p.id)
 		}
 		p.Horarios.expandirTempos(nTempos)
+		p.matriz.expandirTempos(nTempos)
 	}
 
 	// Preencher quadro com 0 onde pode ter aulas e -1 onde não haverá aulas
@@ -206,7 +227,8 @@ func printarHorario(quadro []int) {
 			for dia := 0; dia < 7; dia++ {
 				idDisciplina := quadro[toQuadroIndex(turma,dia,tempo)]
 				if idDisciplina > 0 {
-					fmt.Print(disciplinas[idDisciplina-1].Nome[0:8],"\t")
+					//fmt.Print(disciplinas[idDisciplina-1].Nome[0:8],"\t")
+					fmt.Print(disciplinas[idDisciplina-1].Nome,"\t")
 				} else {
 					if idDisciplina == 0 {
 						fmt.Print("????????","\t")
@@ -215,22 +237,12 @@ func printarHorario(quadro []int) {
 					}
 				}
 				
-				fmt.Print("\t\t")
+				//fmt.Print("\t\t")
 			}
 			fmt.Println()
 		}
 		fmt.Println("")
 	}
-}
-
-func contarAulas(quadro []int,materia int) int {
-	count := 0
-	for i := 0; i < len(quadro); i++ {
-		if quadro[i] == materia {
-			count++
-		}
-	}
-	return count
 }
 
 func toQuadroIndex(turma int,dia int,tempo int) int {
@@ -246,7 +258,49 @@ func fromQuadroIndex(index int) (int,int,int) {
 	return turma, dia, tempo
 }
 
+func getQuadroValor(turma int,dia int,tempo int) int {
+	if turma < 0 || turma >= len(turmas) { return -1 }
+	if dia < 0 || dia >= 7 { return -1 }
+	if tempo < 0 || tempo >= nTempos { return -1 }
+	return quadro[toQuadroIndex(turma,dia,tempo)]
+}
+
+func iniciarRegras(quadro []int) {
+	for prof := 0; prof < len(professores); prof++ {
+		professores[prof].matriz.copiar(&professores[prof].Horarios)
+	}
+
+	for disc := 0; disc < len(disciplinas); disc++ {
+		disciplina := &disciplinas[disc]
+		disciplina.contAulas = 0
+	}
+
+	for idTurma := 0; idTurma < len(turmas); idTurma++ {
+		//turma := &turmas[idTurma]
+		for tempo := 0; tempo < nTempos; tempo++ {
+			for dia := 0; dia < 7; dia++ {
+				index := toQuadroIndex(idTurma,dia,tempo)
+				idDisciplina := quadro[index]-1
+				if idDisciplina < 0 { continue }
+				
+				disciplina := &disciplinas[idDisciplina]
+				disciplina.contAulas++
+
+				for d_prof := 0; d_prof < len(disciplina.idProfessores); d_prof++ {
+					prof_horario := &professores[disciplina.idProfessores[d_prof]].matriz
+					prof_horario.getHorarioDia(dia)[tempo] = idDisciplina
+				}
+			}
+		}
+	}
+}
+
 func regrasHorario(quadro []int, possibs *Possib) {
+	if possibs == nil { // atualizar cache com base no quadro
+		iniciarRegras(quadro)
+		return
+	}
+
 	index := possibs.index
 	idTurma,dia,tempo := fromQuadroIndex(index)
 
@@ -263,7 +317,7 @@ func regrasHorario(quadro []int, possibs *Possib) {
 	}
 
 	// A turma deve poder ter aula neste tempo
-	turma := turmas[idTurma]
+	turma := &turmas[idTurma]
 	if !turma.Horarios.possui(dia,tempo) {
 		possibs.resetar(false)
 		return
@@ -272,60 +326,59 @@ func regrasHorario(quadro []int, possibs *Possib) {
 	// verificar se já tem o número necessário de aulas nessa matéria
 	for i := 0; i < len(possibs.p); i++ {
 		if !possibs.p[i] { continue }
-
-		// esgotou o número de aulas a serem escolhidas desta matéria
-		if contarAulas(quadro,i+1) >= disciplinas[i].Aulas {
-			possibs.p[i] = false
-		}
-	}
-
-	// As aulas devem ser de 2 em 2, sem cruzar o intervalo
-	for i := 0; i < len(possibs.p); i++ {
-		_index := toQuadroIndex(idTurma,dia,tempo+1)
-		if (tempo == 0 || tempo == 2) && (quadro[_index] > 0 && quadro[_index]-1 != i) {
-			possibs.p[i] = false
-		}
-		_index = toQuadroIndex(idTurma,dia,tempo-1)
-		if (tempo == 1 || tempo == 3) && (quadro[_index] > 0 && quadro[_index]-1 != i) {
-			possibs.p[i] = false
-		}
-	}
-
-	// O professor deve estar disponivel neste tempo
-	for i := 0; i < len(possibs.p); i++ {
-		var disciplina *Disciplina = &disciplinas[i]
-		for k := 0; k < len(disciplina.idProfessores); k++ {
-			var professor *Professor = &professores[disciplina.idProfessores[k]]
-			// O professor não dá aulas neste dia/tempo
-			if !professor.Horarios.possui(dia,tempo) {
-				possibs.p[i] = false
-				break
-			}
-
-			// O professor já está em outra turma neste dia/tempo
-			for cturma := 0; cturma < len(turmas); cturma++ {
-				if cturma == idTurma { continue }
-
-				caula := quadro[toQuadroIndex(cturma,dia,tempo)]
-				if caula > 0 && disciplinas[caula-1].possuiProfessor(professor.id) {
-					possibs.p[i] = false
-					break
-				}
-			}
-		}
-	}
-
-	// A disciplina deve poder ser nesta turma
-	for i := 0; i < len(possibs.p); i++ {
-		var disciplina *Disciplina = &disciplinas[i]
-
-		if disciplina.idTurma != idTurma {
-			possibs.p[i] = false
-		}
+		
+		possibs.p[i] = podeDisciplina(i,idTurma,dia,tempo)
 	}
 }
 
+func podeDisciplina(idDisciplina int,idTurma int ,dia int, tempo int) bool {
+	var disciplina *Disciplina = &disciplinas[idDisciplina]
+
+	// esgotou o número de aulas a serem escolhidas desta matéria
+	if disciplina.contAulas >= disciplina.Aulas {
+		return false
+	}
+
+	// A disciplina deve poder ser nesta turma
+	if disciplina.idTurma != idTurma {
+		return false
+	}
+
+	// O professor deve estar disponivel neste tempo
+	for k := 0; k < len(disciplina.idProfessores); k++ {
+		var professor *Professor = &professores[disciplina.idProfessores[k]]
+		// O professor não dá aulas neste dia/tempo ou O professor já está em outra turma neste dia/tempo
+		if !professor.matriz.possui(dia,tempo) {
+			return false
+		}
+	}
+
+	// As aulas devem ser agrupadas de acordo com o especificado
+	// Regra só funciona no horário atual, depois tem que ver isso
+	if disciplina.Agrupar == 2 {
+		_index := toQuadroIndex(idTurma,dia,tempo+1)
+		if (tempo == 0 || tempo == 2) && (quadro[_index] > 0 && quadro[_index]-1 != idDisciplina) {
+			return false
+		}
+		_index = toQuadroIndex(idTurma,dia,tempo-1)
+		if (tempo == 1 || tempo == 3) && (quadro[_index] > 0 && quadro[_index]-1 != idDisciplina) {
+			return false
+		}
+	}
+	if disciplina.Agrupar == 4 && disciplina.contAulas > 0 {
+		if getQuadroValor(idTurma,dia,0)-1 != idDisciplina &&
+		getQuadroValor(idTurma,dia,1)-1 != idDisciplina &&
+		getQuadroValor(idTurma,dia,2)-1 != idDisciplina &&
+		getQuadroValor(idTurma,dia,3)-1 != idDisciplina {
+			return false
+		}
+	}
+
+	return true
+}
+
 func ExecHorario() {
+	rand.Seed(time.Now().UnixNano())
 	fmt.Println("Horario")
 
 	err := loadJson("./aulas.json")
@@ -344,8 +397,12 @@ func ExecHorario() {
 		printarHorario(quadro)
 	}
 
-	/*solucoes := solucionarQuadroSemParar(quadro,len(materias),regrasHorario,nil)
+	/*solucoes := solucionarQuadroSemParar(quadro,len(disciplinas),regrasHorario,nil)
 	if solucoes != nil {
+		for i:=0; i< len(solucoes) && i < 10; i++{
+			fmt.Println("\nSolução:",i)
+			printarHorario(solucoes[i])
+		}
 		fmt.Println("Terminou de procurar soluções! iter:",iter," nSolucoes:",len(solucoes))
 	} else {
 		fmt.Println("Não conseguiu solucionar iter:",iter)

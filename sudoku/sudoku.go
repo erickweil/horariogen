@@ -2,6 +2,7 @@ package sudoku
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -30,6 +31,10 @@ func printarQuadro(quadro []int) {
 }
 
 func regrasSudoku(quadro []int, possibs *Possib) {
+	if possibs == nil {
+		return
+	}
+
 	index := possibs.index
 	py := index / 9
 	px := index % 9
@@ -74,6 +79,8 @@ func regrasSudoku(quadro []int, possibs *Possib) {
 }
 
 func ExecSudoku() {
+	
+	rand.Seed(time.Now().UnixNano())
 	fmt.Println("Sudoku")
 
 	var quadro = []int{
@@ -89,7 +96,19 @@ func ExecSudoku() {
 		0, 0, 0,  0, 6, 0,  8, 9, 0,
 		2, 9, 0,  0, 3, 8,  0, 6, 7,*/
 
-		0, 0, 0,  9, 0, 0,  7, 2, 4,
+		0, 0, 0,  0, 0, 0,  0, 0, 0,
+		0, 0, 0,  0, 0, 3,  0, 8, 5,
+		0, 0, 1,  0, 2, 0,  0, 0, 0,
+		
+		0, 0, 0,  5, 0, 7,  0, 0, 0, 
+		0, 0, 4,  0, 0, 0,  1, 0, 0,
+		0, 9, 0,  0, 0, 0,  0, 0, 0,
+
+		5, 0, 0,  0, 0, 0,  0, 7, 3,
+		0, 0, 2,  0, 1, 0,  0, 0, 0, 
+		0, 0, 0,  0, 4, 0,  0, 0, 9,
+
+		/*0, 0, 0,  9, 0, 0,  7, 2, 4,
 		3, 0, 0,  0, 0, 7,  5, 0, 0,
 		0, 0, 9,  0, 0, 4,  0, 0, 6,
 	
@@ -99,7 +118,7 @@ func ExecSudoku() {
 	
 		6, 5, 8,  4, 0, 0,  0, 3, 1,
 		0, 0, 0,  0, 6, 0,  8, 9, 0,
-		2, 9, 0,  0, 3, 8,  0, 0, 0,
+		2, 9, 0,  0, 3, 8,  0, 0, 0,*/
 
 		/*8, 0, 0,  0, 0, 0,  0, 0, 0,
 		0, 0, 3,  6, 0, 0,  0, 0, 0,
@@ -116,19 +135,19 @@ func ExecSudoku() {
 
 	defer timeTrack(time.Now(),"Sudoku")
 
-	/*if solucionarQuadro(quadro,9,regrasSudoku) {
+	if solucionarQuadro(quadro,9,regrasSudoku) {
 		fmt.Println("Solucionado! iter:",iter)
 		printarQuadro(quadro)
 	} else {
 		fmt.Println("Não conseguiu solucionar iter:",iter)
 		printarQuadro(quadro)
-	}*/
+	}
 
-	solucoes := solucionarQuadroSemParar(quadro,9,regrasSudoku,nil)
+	/*solucoes := solucionarQuadroSemParar(quadro,9,regrasSudoku,nil)
 	if solucoes != nil {
 		fmt.Println("Terminou de procurar soluções! iter:",iter," nSolucoes:",len(solucoes))
 	} else {
 		fmt.Println("Não conseguiu solucionar iter:",iter)
 		printarQuadro(quadro)
-	}
+	}*/
 }

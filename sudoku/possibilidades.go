@@ -2,6 +2,7 @@ package sudoku
 
 import (
 	"fmt"
+	"math/rand"
 	//"sort"
 )
 
@@ -67,6 +68,7 @@ type RegrasQuadro func(quadro []int, possibs *Possib)
 
 // Mantém apenas as possibilidades válidas
 func atualizarQuadroPossib(quadro []int, quadro_possib []Possib, regrasfn RegrasQuadro) {
+	regrasfn(quadro,nil)
 	for i := 0; i < len(quadro_possib); i++  {
 		possibs := &quadro_possib[i]
 	
@@ -79,6 +81,9 @@ func obterMelhorPossib(quadro []int, nPossibs int, regrasfn RegrasQuadro) (*Poss
 	var p *Possib = &Possib{-1,make([]bool, nPossibs)}
 	var min_p *Possib = &Possib{-1,make([]bool, nPossibs)}
 	var min_cont int = -1
+
+	// Para atualizar o cache das checagens
+	regrasfn(quadro,nil)
 
 	for index := 0; index < len(quadro); index++ {
 		if quadro[index] != 0 { continue } // se já foi escolhido ignora
@@ -109,9 +114,24 @@ func checarSolucionado(quadro []int) bool {
 	return true
 }
 
+
+func getRandomRange(arr []int) []int {
+	for i := 0; i < len(arr); i++ {
+		arr[i] = i
+	}
+	rand.Shuffle(len(arr), func(i, j int) {
+		arr[i], arr[j] = arr[j], arr[i]
+	})
+	return arr
+}
+
 var iter int = 0
 func solucionarQuadro(quadro []int,nPossibs int, regrasfn RegrasQuadro) bool {
 	iter++
+
+	if iter % 10000 == 0 {
+		fmt.Printf("iter: %d\n", iter)
+	}
 
 	p, err := obterMelhorPossib(quadro,nPossibs,regrasfn)
 
@@ -123,7 +143,9 @@ func solucionarQuadro(quadro []int,nPossibs int, regrasfn RegrasQuadro) bool {
 	// Uma vez escolhido o quadrado a partir do qual continuar,
 	// testa cada possibilidade deste quadrado
 	//for k := 0; k < len(p.p); k++ {
-	for k := len(p.p)-1; k >= 0; k-- {
+	//for k := len(p.p)-1; k >= 0; k-- {
+	randRange := getRandomRange(make([]int, len(p.p)))
+	for _, k := range randRange {
 		// Se é possível colocar o valor k neste quadrado
 		if p.p[k] { 
 			quadro[p.index] = k+1
@@ -162,8 +184,8 @@ func solucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, 
 		return results		
 	}
 
-	for k := 0; k < len(p.p); k++ {
-	//for k := len(p.p)-1; k >= 0; k-- {
+	//for k := 0; k < len(p.p); k++ {
+	for k := len(p.p)-1; k >= 0; k-- {
 		// Se é possível colocar o valor k neste quadrado
 		if p.p[k] { 
 			quadro[p.index] = k+1
