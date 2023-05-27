@@ -4,13 +4,9 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+	"github.com/erickweil/horariogen/pencilmark"
+	"github.com/erickweil/horariogen/utils"
 )
-
-//https://coderwall.com/p/cp5fya/measuring-execution-time-in-go
-func timeTrack(start time.Time, name string) {
-    elapsed := time.Since(start)
-    fmt.Printf("%s took %s", name, elapsed)
-}
 
 func printarQuadro(quadro []int) {
 	for i := 0; i < len(quadro); i++ {
@@ -30,20 +26,20 @@ func printarQuadro(quadro []int) {
 	}
 }
 
-func regrasSudoku(quadro []int, possibs *Possib) {
+func regrasSudoku(quadro []int, possibs *pencilmark.Possib) {
 	if possibs == nil {
 		return
 	}
 
-	index := possibs.index
+	index := possibs.Index
 	py := index / 9
 	px := index % 9
 	// Se já foi escolhido no quadro, só tem aquela opção disponível
 	if quadro[index] != 0 {
 		for i := 0; i < 9; i++ {
-			possibs.p[i] = false
+			possibs.P[i] = false
 		}
-		possibs.p[quadro[index]-1] = true
+		possibs.P[quadro[index]-1] = true
 		return
 	}
 	// verificar colunas
@@ -52,7 +48,7 @@ func regrasSudoku(quadro []int, possibs *Possib) {
 		quadro_v := quadro[y*9 + px]
 		if quadro_v == 0 {continue}
 
-		possibs.p[quadro_v-1] = false
+		possibs.P[quadro_v-1] = false
 	}
 
 	// verificar linhas
@@ -61,7 +57,7 @@ func regrasSudoku(quadro []int, possibs *Possib) {
 		quadro_v := quadro[py*9 + x]
 		if quadro_v == 0 {continue}
 
-		possibs.p[quadro_v-1] = false
+		possibs.P[quadro_v-1] = false
 	}
 
 	// verificar quadrado
@@ -73,7 +69,7 @@ func regrasSudoku(quadro []int, possibs *Possib) {
 			quadro_v := quadro[y*9 + x]
 			if quadro_v == 0 {continue}
 
-			possibs.p[quadro_v-1] = false
+			possibs.P[quadro_v-1] = false
 		}
 	}
 }
@@ -133,9 +129,10 @@ func ExecSudoku() {
 		0, 9, 0,  0, 0, 0,  4, 0, 0,*/
 	}
 
-	defer timeTrack(time.Now(),"Sudoku")
+	defer utils.TimeTrack(time.Now(),"Sudoku")
 
-	if solucionarQuadro(quadro,9,regrasSudoku) {
+	iter, solved := pencilmark.SolucionarQuadro(quadro,9,regrasSudoku)
+	if solved {
 		fmt.Println("Solucionado! iter:",iter)
 		printarQuadro(quadro)
 	} else {

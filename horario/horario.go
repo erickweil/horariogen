@@ -1,4 +1,4 @@
-package sudoku
+package horario
 
 import (
 	"encoding/json"
@@ -7,7 +7,11 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	"github.com/erickweil/horariogen/pencilmark"
+	"github.com/erickweil/horariogen/utils"
 )
+
+type Possib = pencilmark.Possib
 
 type Horario struct {
 	Dom []int	`json:"dom"`
@@ -300,7 +304,7 @@ func regrasHorario(quadro []int, possibs *Possib) {
 		return
 	}
 
-	index := possibs.index
+	index := possibs.Index
 	idTurma,dia,tempo := fromQuadroIndex(index)
 
 	// Se já foi escolhido no quadro, só tem aquela opção disponível
@@ -308,9 +312,9 @@ func regrasHorario(quadro []int, possibs *Possib) {
 	// 0 indica que não foi escolhido
 	// >0 indica que uma matéria foi escolhida
 	if quadro[index] != 0 {
-		possibs.resetar(false)
+		possibs.Resetar(false)
 		if quadro[index] > 0 {
-			possibs.p[quadro[index]-1] = true
+			possibs.P[quadro[index]-1] = true
 		}
 		return
 	}
@@ -318,15 +322,15 @@ func regrasHorario(quadro []int, possibs *Possib) {
 	// A turma deve poder ter aula neste tempo
 	turma := &turmas[idTurma]
 	if !turma.Horarios.possui(dia,tempo) {
-		possibs.resetar(false)
+		possibs.Resetar(false)
 		return
 	}
 
 	// verificar se já tem o número necessário de aulas nessa matéria
-	for i := 0; i < len(possibs.p); i++ {
-		if !possibs.p[i] { continue }
+	for i := 0; i < len(possibs.P); i++ {
+		if !possibs.P[i] { continue }
 		
-		possibs.p[i] = podeDisciplina(i,idTurma,dia,tempo)
+		possibs.P[i] = podeDisciplina(i,idTurma,dia,tempo)
 	}
 }
 
@@ -386,9 +390,10 @@ func ExecHorario() {
 		return
 	}
 
-	defer timeTrack(time.Now(),"Horario")
+	defer utils.TimeTrack(time.Now(),"Horario")
 
-	if solucionarQuadro(quadro,len(disciplinas),regrasHorario) {
+	iter, solved := pencilmark.SolucionarQuadro(quadro,len(disciplinas),regrasHorario)
+	if solved {
 		fmt.Println("Solucionado! iter:",iter)
 		printarHorario(quadro)
 	} else {
