@@ -286,9 +286,8 @@ func iniciarRegras(quadro []int) {
 				disciplina := &disciplinas[idDisciplina]
 				disciplina.contAulas++
 
-				for d_prof := 0; d_prof < len(disciplina.idProfessores); d_prof++ {
-					prof_horario := &professores[disciplina.idProfessores[d_prof]].matriz
-					prof_horario.getHorarioDia(dia)[tempo] = idDisciplina
+				for _, idProf := range disciplina.idProfessores {
+					professores[idProf].matriz.getHorarioDia(dia)[tempo] = 0
 				}
 			}
 		}
@@ -310,7 +309,7 @@ func regrasHorario(quadro []int, possibs *Possib) {
 	// >0 indica que uma matéria foi escolhida
 	if quadro[index] != 0 {
 		possibs.resetar(false)
-		if quadro[index] >= 1 {
+		if quadro[index] > 0 {
 			possibs.p[quadro[index]-1] = true
 		}
 		return
@@ -334,13 +333,13 @@ func regrasHorario(quadro []int, possibs *Possib) {
 func podeDisciplina(idDisciplina int,idTurma int ,dia int, tempo int) bool {
 	var disciplina *Disciplina = &disciplinas[idDisciplina]
 
-	// esgotou o número de aulas a serem escolhidas desta matéria
-	if disciplina.contAulas >= disciplina.Aulas {
+	// A disciplina deve poder ser nesta turma
+	if disciplina.idTurma != idTurma {
 		return false
 	}
 
-	// A disciplina deve poder ser nesta turma
-	if disciplina.idTurma != idTurma {
+	// esgotou o número de aulas a serem escolhidas desta matéria
+	if disciplina.contAulas >= disciplina.Aulas {
 		return false
 	}
 
