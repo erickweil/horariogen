@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	//"github.com/erickweil/horariogen/horario"
-	"github.com/erickweil/horariogen/canvas"
+	//"github.com/erickweil/horariogen/meucanvas"
+	"github.com/erickweil/horariogen/genetic"
 )
 
 // https://github.com/golang-standards/project-layout/tree/master
@@ -13,5 +14,7 @@ func main() {
 
 	//horario.ExecHorario()
 	//sudoku.ExecSudoku()
-	canvas.ExecCanvas()
+
+	//meucanvas.ExecCanvas()
+	genetic.ExecHillClimbing()
 }
