@@ -27,7 +27,9 @@ func hillFit(criatura *Cromossomo) float64 {
 	}
 
 	var p meucanvas.Pixel = imagePixels[imgY][imgX]
-	return 100 + float64(p.R + p.G + p.B) / 3.0
+	var fit = 100 + float64(p.R + p.G + p.B) / 3.0
+
+	return fit*fit
 }
 
 func hillInit(cv *canvas.Canvas) {
@@ -49,18 +51,18 @@ func hillInit(cv *canvas.Canvas) {
 
 	rand.Seed(time.Now().UnixNano())
 	populacao = CriarPopulacao(
-		50,2,
+		100,2,
 		INTEIRO,
 		ROLETA,
 		ROLETA,
 		PERTURBACAO,
 		RECOMBINACAO_ARITMETICA,
 		func(criatura *Cromossomo) {
-		criatura.genoma[0] = rand.Intn(w)
-		criatura.genoma[1] = rand.Intn(h)
+		//criatura.genoma[0] = rand.Intn(w)
+		//criatura.genoma[1] = rand.Intn(h)
 
-		//criatura.genoma[0] = rand.Intn(100)
-		//criatura.genoma[1] = rand.Intn(100)
+		criatura.genoma[0] = rand.Intn(100)
+		criatura.genoma[1] = rand.Intn(100)
 	}, hillFit)
 }
 
@@ -78,7 +80,7 @@ func hillLoop(cv *canvas.Canvas, w, h, minwh float64) {
 	cv.SetFont("Arimo-Regular.ttf", 22)
 	cv.FillText(fmt.Sprintf("Tamanho da população:%d",nCriaturas),40.0,40.0)
 	
-	cv.SetFillStyle("#FF0000")
+	//cv.SetFillStyle("#FF0000")
 	for i := 0; i < nCriaturas; i++ {
 		criatura := &populacao.criaturas[i]
 		
@@ -86,6 +88,10 @@ func hillLoop(cv *canvas.Canvas, w, h, minwh float64) {
 			float64(criatura.genoma[0])/float64(pixelsw) * 2.0 - 1.0,
 			float64(criatura.genoma[1])/float64(pixelsw) * 2.0 - 1.0,
 			w,h)
+
+		fit := criatura.fitness / populacao.fitnessSoma
+		//fmt.Println(fit)
+		cv.SetFillStyle(fit*200.0,fit*100.0,fit*50.0)
 		cv.BeginPath()
 		cv.Ellipse(posx,posy,3,3,0.0,0.0,math.Pi*2,false)
 		cv.ClosePath()

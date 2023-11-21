@@ -1,4 +1,5 @@
 package genetic
+
 /*	https://www.youtube.com/watch?v=kHyNqSnzP8Y
 	População -> Mutação -> Crossover -> Fenótipos -> Fitness -> Probabilidade -> Seleção
 
@@ -18,7 +19,7 @@ package genetic
 
 	Inicialização/Representação do genoma:
 	binária, números reais, números inteiros, permutação
-	
+
 	Seleção de Pais:
 		Random, Roleta (Fitness Proportionate Selection), Tournament, Rank
 
@@ -28,26 +29,27 @@ package genetic
 			disturbance(bit flip, small value, reset), swap, scramble, inversion
 		CrossOver:
 			single-point, n-point, uniform, arithmetic recombination, ox1, ox2, shuffle, ring, equivalent swap
-			
+
 	Sobrevivência para próxima Geração:
 		random, fitness(veja Seleção de Pai), trunk ranked list, por idade
-	
+
 	Condição de Parada
 		Nenhuma melhora em N iterações
 		Atingiu máximo de iterações
 		Função fitness atingiu objetivo
 
-	Em resumo, a partir de uma população inicial cria-se descendentes (Com mutações e crossover), e seleciona para a 
+	Em resumo, a partir de uma população inicial cria-se descendentes (Com mutações e crossover), e seleciona para a
 	próxima geração os que tiverem mais pontos de acordo com algum critério
 */
 
 import (
 	//"fmt"
 	//"fmt"
+	"math"
 	"math/rand"
+	"sort"
 	//"sort"
 )
-
 
 // Representação do Genoma, como cada alelo é representado
 type TipoGenoma int
@@ -132,28 +134,53 @@ type Populacao struct {
 	crossover TipoCrossOver
 }
 
+// Tipo que um dot product entre os cromossomos
+func calcularDifferenca(a *Cromossomo, b *Cromossomo) float64 {
+	diff := 0.0
+	for i := 0; i < len(a.genoma); i++ {
+		d := float64(a.genoma[i] - b.genoma[i])
+		diff += math.Abs(d)
+	}
+	return diff
+}
+
 func (p *Populacao) calcularFitness(calcFitness FuncaoFitness) {
 	fitnessSoma := 0.0
 	for i := 0; i < len(p.criaturas); i++ {
 		criatura := &p.criaturas[i]
 		fitness := calcFitness(criatura)
+		
+		/*// aplicar operador de diversidade aumentando o fitness de indivíduos diferentes
+		totalDiff := 0.0
+		for k := 0; k < len(p.criaturas); k++ {
+			// Cálculo da diferença entro o genoma
+			totalDiff += calcularDifferenca(criatura, &p.criaturas[k])
+		}
+		// Quanto mais diferente, mais fitness
+		fitness += 0.00005 * totalDiff*/
+
 		criatura.fitness = fitness
+
 		fitnessSoma += fitness
 	}
+
 	p.fitnessSoma = fitnessSoma
 }
 
+// Random Fitness Proportionate Selection
 func (p *Populacao) selecionarPai(criaturas []Cromossomo,outro *Cromossomo) (*Cromossomo,int) {
 	var ultimoNaoIgual *Cromossomo
 	var ultimoI = 0
+	chance := 1.0 / float64(len(criaturas))
 	for i := 0; i < len(criaturas); i++ {
+		//criatura := &criaturas[rand.Intn(len(criaturas))]
 		criatura := &criaturas[i]
 		if criatura == outro { continue }
 
 		ultimoNaoIgual = criatura
 		ultimoI = i
 
-		chance := criatura.fitness / p.fitnessSoma
+		//chance := criatura.fitness / p.fitnessSoma
 		if rand.Float64() > chance { 
 			continue
 		} else { break }
@@ -161,7 +188,8 @@ func (p *Populacao) selecionarPai(criaturas []Cromossomo,outro *Cromossomo) (*Cr
 	return ultimoNaoIgual, ultimoI
 }
 
-var mutationStep = 10
+var mutationStep = 8
+var mutationChance = 0.25
 var sobrevivenciaChance = 0.25
 
 func filhoPorMutacao(criatura *Cromossomo) *Cromossomo{
@@ -176,12 +204,22 @@ func filhoPorMutacao(criatura *Cromossomo) *Cromossomo{
 	return filho
 }
 
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
 func aplicarMutacao(criatura *Cromossomo) {
+	if rand.Float64() > mutationChance { return }
 	for i := 0; i < len(criatura.genoma); i++ {
+		mut := mutationStep + min(rand.Intn(20),rand.Intn(20))
+
 		if rand.Intn(2) > 0 {
-			criatura.genoma[i] = criatura.genoma[i] + rand.Intn(mutationStep)
+			criatura.genoma[i] = criatura.genoma[i] + rand.Intn(mut)
 		} else {
-			criatura.genoma[i] = criatura.genoma[i] - rand.Intn(mutationStep)
+			criatura.genoma[i] = criatura.genoma[i] - rand.Intn(mut)
 		}
 	}
 }
@@ -190,11 +228,29 @@ func filhoPorCrossOver(pai *Cromossomo, mae *Cromossomo) (*Cromossomo,*Cromossom
 	filho1 := &Cromossomo{make([]int, len(pai.genoma)),0.0}
 	filho2 := &Cromossomo{make([]int, len(pai.genoma)),0.0}
 
-	filho1.genoma[0] = pai.genoma[0]
-	filho1.genoma[1] = mae.genoma[1]
+	// Single Point
+	//if len(pai.genoma) == 2 {
+	//	filho1.genoma[0] = pai.genoma[0]
+	//	filho1.genoma[1] = mae.genoma[1]
+	//	
+	//	filho2.genoma[0] = mae.genoma[0]
+	//	filho2.genoma[1] = pai.genoma[1]
+	//} else {
+		ponto := rand.Intn(len(pai.genoma)-1)+1 
+		for i := 0; i < len(pai.genoma); i++ {
+			if i < ponto {
+				filho1.genoma[i] = pai.genoma[i]
+				filho2.genoma[i] = mae.genoma[i]
+			} else {
+				filho1.genoma[i] = mae.genoma[i]
+				filho2.genoma[i] = pai.genoma[i]
+			}
+		}
+	//}
 	
-	filho2.genoma[0] = mae.genoma[0]
-	filho2.genoma[1] = pai.genoma[1]
+	/*
+
+	*/
 
 	/*// Cross Over Uniforme
 	for i := 0; i < len(pai.genoma); i++ {
@@ -220,9 +276,15 @@ type FuncaoFitness func(criatura *Cromossomo) float64
 func SimularGeracao(populacao *Populacao, calcFitness FuncaoFitness) *Populacao {
 	// 1. Seleção de Pais & 2. CrossOver
 	// A ideia é fazer crossOver até completar o dobro da população
+
+	sort.Slice(populacao.criaturas,func(i, j int) bool {
+		return populacao.criaturas[i].fitness < populacao.criaturas[j].fitness
+	})
+
+	populacaoPais := populacao.criaturas[:]
 	for len(populacao.criaturas) < populacao.tamanhoPopulacao*2 {
-		pai, _ := populacao.selecionarPai(populacao.criaturas,nil)
-		mae, _ := populacao.selecionarPai(populacao.criaturas,pai)
+		pai, _ := populacao.selecionarPai(populacaoPais,nil)
+		mae, _ := populacao.selecionarPai(populacaoPais,pai)
 
 		filho1, filho2 := filhoPorCrossOver(pai,mae)
 
@@ -234,6 +296,11 @@ func SimularGeracao(populacao *Populacao, calcFitness FuncaoFitness) *Populacao 
 	}
 
 	populacao.calcularFitness(calcFitness)
+
+	//fitnessMedia := populacao.fitnessSoma / float64(len(populacao.criaturas))
+	sort.Slice(populacao.criaturas,func(i, j int) bool {
+		return populacao.criaturas[i].fitness < populacao.criaturas[j].fitness
+	})
 
 	// A ideia é fazer sobreviver só metade do total da população
 	k := 0
@@ -252,11 +319,7 @@ func SimularGeracao(populacao *Populacao, calcFitness FuncaoFitness) *Populacao 
 	populacao.criaturas = populacao.criaturas[0:k]
 
 	return populacao
-	//fitnessMedia := fitnessSoma / float64(len(populacao.criaturas))
 
-	//sort.Slice(populacao.criaturas,func(i, j int) bool {
-	//	return populacao.criaturas[j].fitness < populacao.criaturas[i].fitness
-	//})
 	/*
 	k := 0
 	// Selecionar metade para sobreviver
