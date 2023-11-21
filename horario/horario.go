@@ -222,6 +222,18 @@ func loadJson(caminho string) error {
 	fmt.Printf("Carregou %d turmas, %d disciplinas, %d professores, Horario: %d Tempos, %d espaços no quadro\n",
 	len(turmas),len(disciplinas),len(professores),nTempos,len(quadro))
 
+	for i := 0; i < len(turmas); i++ {
+		// Somar a quantidade de aulas de cada turma, para validar caso aconteça aulas demais para o horário
+		somaAulas := 0
+		for j := 0; j < len(disciplinas); j++ {
+			if disciplinas[j].idTurma == i {
+				somaAulas += disciplinas[j].Aulas
+			}
+		}
+		fmt.Printf("%s: %d aulas\n",turmas[i].Nome,somaAulas)
+	}
+
+
 	return nil
 }
 
