@@ -184,10 +184,15 @@ func _solucionarQuadro(depth int, iter *int, quadro []int,nPossibs int, regrasfn
 	return false
 }
 
-func SolucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, results [][]int) [][]int {
+func SolucionarQuadroSemParar(quadro []int, iter *int,nPossibs int, regrasfn RegrasQuadro, results [][]int) [][]int {
 	//iter++
 
-	if len(results) > 1000{
+	*iter++
+	if *iter % 10000 == 0 {
+		fmt.Printf("iter: %d Soluções: %d\n", *iter, len(results))
+	}
+
+	if len(results) > 100{
 		fmt.Println("Já deu né! Parando...")
 		return results
 	}
@@ -201,7 +206,10 @@ func SolucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, 
 	}
 
 	//for k := 0; k < len(p.p); k++ {
-	for k := len(p.P)-1; k >= 0; k-- {
+	//for k := len(p.P)-1; k >= 0; k-- {
+
+	randRange := getRandomRange(make([]int, len(p.P)))
+	for _, k := range randRange {
 		// Se é possível colocar o valor k neste quadrado
 		if p.P[k] { 
 			quadro[p.Index] = k+1
@@ -215,7 +223,7 @@ func SolucionarQuadroSemParar(quadro []int,nPossibs int, regrasfn RegrasQuadro, 
 				//fmt.Println("Solucionado! iter:",iter," Soluções:",len(results))
 			} else {
 				// Se não está solucionado, tenta solucionar com mais escolhas depois dessa
-				results = SolucionarQuadroSemParar(quadro,nPossibs,regrasfn,results)
+				results = SolucionarQuadroSemParar(quadro,iter,nPossibs,regrasfn,results)
 			}
 			// Remove a escolha para tentar outras possibilidades
 			quadro[p.Index] = 0

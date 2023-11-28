@@ -100,6 +100,7 @@ type Disciplina struct {
 	id int				`json:"-"`
 	idProfessores []int	`json:"-"`
 	idTurma int			`json:"-"`
+	idDisciplinasUnidas []int	`json:"-"`
 	Turma string		`json:"turma"`
 	Aulas int			`json:"aulas"`
 	Agrupar int			`json:"agrupar"`
@@ -108,6 +109,13 @@ type Disciplina struct {
 	// cache
 	contAulas int	`json:"-"`
 }
+
+type DisciplinaUnida struct {
+	id int				`json:"-"`
+	Grupo string		`json:"grupo"`
+	Disciplinas []string	`json:"disciplinas"`
+}
+
 
 func (d *Disciplina) possuiProfessor(prof int) bool {
 	for i := 0; i < len(d.idProfessores); i++ {
@@ -119,6 +127,7 @@ func (d *Disciplina) possuiProfessor(prof int) bool {
 type ArquivoJson struct {
 	Turmas []Turma				`json:"turmas"`
 	Disciplinas []Disciplina	`json:"disciplinas"`
+	DisciplinaUnidas []DisciplinaUnida	`json:"disciplinas_unidas"`
 	Professores []Professor		`json:"professores"`
 }
 
@@ -173,6 +182,7 @@ func loadJson(caminho string) error {
 
 	turmas = arquivoJson.Turmas
 	disciplinas = arquivoJson.Disciplinas
+	disciplinas_unidas := arquivoJson.DisciplinaUnidas
 	professores = arquivoJson.Professores
 
 	nTempos = 0
@@ -192,6 +202,33 @@ func loadJson(caminho string) error {
 		var d *Disciplina = &disciplinas[i]
 		d.id = i
 		d.idTurma = getTurma(d.Turma)
+
+		var possuiUnidas bool = false
+		for k := 0; k < len(disciplinas_unidas); k++ {
+			var du *DisciplinaUnida = &disciplinas_unidas[k]
+			for j := 0; j < len(du.Disciplinas); j++ {
+				if du.Disciplinas[j] == d.Nome {
+					possuiUnidas = true
+					break
+				}
+			}
+			if possuiUnidas {
+				d.idDisciplinasUnidas = make([]int, 0)
+				for j := 0; j < len(du.Disciplinas); j++ {
+					if du.Disciplinas[j] == d.Nome { continue }
+					d.idDisciplinasUnidas = append(d.idDisciplinasUnidas,getDisciplina(du.Disciplinas[j]))
+				}
+			}
+		}
+
+		// printar disciplinas unidas
+		/*if possuiUnidas {
+			fmt.Print(d.Nome," Unida com: ")
+			for j := 0; j < len(d.idDisciplinasUnidas); j++ {
+				fmt.Print(disciplinas[d.idDisciplinasUnidas[j]].Nome," ")
+			}
+			fmt.Println()
+		}*/
 	}
 
 	for i := 0; i < len(professores); i++ {
@@ -389,6 +426,21 @@ func podeDisciplina(idDisciplina int,idTurma int ,dia int, tempo int) bool {
 		}
 	}
 
+	// As disciplinas unidas devem ser escolhidas juntas
+	if len(disciplina.idDisciplinasUnidas) > 0 {
+		// Verifica se alguma das disciplinas unidas já foram escolhidas
+		// Deve poder escolher as outras disciplinas nesse horario também
+		for i := 0; i < len(disciplina.idDisciplinasUnidas); i++ {
+			var discUnida *Disciplina = &disciplinas[disciplina.idDisciplinasUnidas[i]]
+			var marcacaoQuadro = getQuadroValor(discUnida.idTurma,dia,tempo)
+
+			if marcacaoQuadro != 0 && marcacaoQuadro != discUnida.id+1 {
+				// Se foi escolhido, deve ser a mesma disciplina
+				return false
+			}
+		}
+	}
+
 	return true
 }
 
@@ -404,24 +456,25 @@ func ExecHorario() {
 
 	defer utils.TimeTrack(time.Now(),"Horario")
 
-	iter, solved := pencilmark.SolucionarQuadro(quadro,len(disciplinas),regrasHorario)
+	/*iter, solved := pencilmark.SolucionarQuadro(quadro,len(disciplinas),regrasHorario)
 	if solved {
 		fmt.Println("Solucionado! iter:",iter)
 		printarHorario(quadro)
 	} else {
 		fmt.Println("Não conseguiu solucionar iter:",iter)
 		printarHorario(quadro)
-	}
+	}*/
 
-	/*solucoes := solucionarQuadroSemParar(quadro,len(disciplinas),regrasHorario,nil)
+	var iter int = 0
+	solucoes := pencilmark.SolucionarQuadroSemParar(quadro,&iter,len(disciplinas),regrasHorario,nil)
 	if solucoes != nil {
 		for i:=0; i< len(solucoes) && i < 10; i++{
 			fmt.Println("\nSolução:",i)
 			printarHorario(solucoes[i])
 		}
-		fmt.Println("Terminou de procurar soluções! iter:",iter," nSolucoes:",len(solucoes))
+		fmt.Println("Terminou de procurar soluções! nSolucoes:",len(solucoes))
 	} else {
-		fmt.Println("Não conseguiu solucionar iter:",iter)
+		fmt.Println("Não conseguiu solucionar!")
 		printarHorario(quadro)
-	}*/
+	}
 }
