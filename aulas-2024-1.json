@@ -33,89 +33,136 @@
 				"sex":[1,2,3,4],
 				"sab":[]
 			}
+		}, {
+			"nome": "Turma 2021",
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
 		}
 	],
 	"disciplinas": [
 		{ 
-			"nome":"Linguagens de Programação",
-			"turma": "Turma 2024",
-			"aulas": 4,
-			"agrupar": 2
-		},
-		{ 
-			"nome":"Redes de Computadores",
+			"nome":"Fundamentos de Tecnologia da Informação",
 			"turma": "Turma 2024",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Sistemas Operacionais",
+			"nome":"Organização de Computadores",
 			"turma": "Turma 2024",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Banco de Dados II",
+			"nome":"Algoritmos e Lógica de Programação",
 			"turma": "Turma 2024",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Engenharia de Software",
+			"nome":"Banco de Dados I",
 			"turma": "Turma 2024",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Fábrica de Software I",
+			"nome":"Fundamentos em Negócios",
+			"turma": "Turma 2024",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{ 
+			"nome":"Relações Étnico-Raciais",
+			"turma": "Turma 2024",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{ 
+			"nome":"Matemática Computacional",
 			"turma": "Turma 2024",
 			"aulas": 4,
-			"agrupar": 4 
+			"agrupar": 2
 		},
 
-        {
-			"nome":"Estrutura de Dados II",
-			"turma": "Turma 2023",
-			"aulas": 2,
-			"agrupar": 2
-		},
-        {
-			"nome":"Estatística",
+		{
+			"nome":"Orientação a Objetos",
 			"turma": "Turma 2023",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
-			"nome":"Devops e Cloud II",
+			"nome":"Devops e Cloud I",
 			"turma": "Turma 2023",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
-			"nome":"Teste de Software II",
+			"nome":"Estrutura de Dados I",
 			"turma": "Turma 2023",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
-			"nome":"Frameworks para Front-end",
+			"nome":"Programação Web: front-end",
 			"turma": "Turma 2023",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
-			"nome":"Web Services",
+			"nome":"Programação Web: back-end",
 			"turma": "Turma 2023",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
-			"nome":"Fábrica de Software III",
+			"nome":"Teste de Software I",
+			"turma": "Turma 2023",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Fábrica de Software II",
 			"turma": "Turma 2023",
 			"aulas": 4,
 			"agrupar": 4
 		},
 		
+		{
+			"nome":"Ciência de Dados",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Tópicos Especiais I",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Metodologia Científica para Computação",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Internet das Coisas",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Dispositivos Móveis I",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
 		{
 			"nome":"Dispositivos Móveis II",
 			"turma": "Turma 2022",
@@ -123,48 +170,61 @@
 			"agrupar": 2
 		},
 		{
-			"nome":"Libras",
+			"nome":"Fábrica de Software IV",
 			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 4
+		},
+
+		{
+			"nome":"Libras",
+			"turma": "Turma 2021",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
 			"nome":"Tópicos Especiais II",
-			"turma": "Turma 2022",
+			"turma": "Turma 2021",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
 			"nome":"Ética, Sociedade e Sustentabilidade",
-			"turma": "Turma 2022",
+			"turma": "Turma 2021",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
 			"nome":"Inteligência Artificial",
-			"turma": "Turma 2022",
+			"turma": "Turma 2021",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
 			"nome":"Arquitetura de Software",
-			"turma": "Turma 2022",
+			"turma": "Turma 2021",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Inteligência em Negócios",
+			"turma": "Turma 2021",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
 			"nome":"Orientações para o Trabalho de Conclusão de Curso",
-			"turma": "Turma 2022",
+			"turma": "Turma 2021",
 			"aulas": 2,
 			"agrupar": 2
 		}
 	],
 	"disciplinas_unidas": [
 		{
-			"grupo": "Fábrica de Software",
+			"grupo": "Adiantando Inteligência em Negócios",
 			"disciplinas": [
-				"Fábrica de Software I",
-				"Fábrica de Software III"
+				"Dispositivos Móveis II",
+				"Inteligência em Negócios"
 			]
 		}
 	],
@@ -172,16 +232,17 @@
 		{ 
 			"nome":"Roberto",
 			"disciplinas": [
-				"Redes de Computadores",
-                "Sistemas Operacionais",
-                "Fábrica de Software I",
-                "Orientações para o Trabalho de Conclusão de Curso"
+				"Fundamentos de Tecnologia da Informação",
+				"Organização de Computadores",
+				"Fábrica de Software II",
+				"Tópicos Especiais I",
+				"Internet das Coisas"
 			],
 			"horarios": {
 				"dom":[],
 				"seg":[1,2,3,4],
 				"ter":[1,2,3,4],
-				"qua":[1,2,3,4],
+				"qua":[1,2],
 				"qui":[],
 				"sex":[1,2,3,4],
 				"sab":[]
@@ -190,10 +251,11 @@
 		{ 
 			"nome":"Erick",
 			"disciplinas": [
-                "Estrutura de Dados II",
-                "Devops e Cloud II",
-                "Fábrica de Software III",
-                "Arquitetura de Software"
+				"Algoritmos e Lógica de Programação",
+				"Orientação a Objetos",
+				"Estrutura de Dados I",
+				"Devops e Cloud I",
+				"Fábrica de Software IV"
 			],
 			"horarios": {
 				"dom":[],
@@ -208,12 +270,14 @@
 		{ 
 			"nome":"Lucas",
 			"disciplinas": [
-                "Engenharia de Software",
-                "Inteligência Artificial"
+				"Ciência de Dados",
+				"Metodologia Científica para Computação",
+				"Inteligência Artificial",
+				"Inteligência em Negócios"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[],
+				"seg":[1,2,3,4],
 				"ter":[1,2,3,4],
 				"qua":[1,2,3,4],
 				"qui":[1,2,3,4],
@@ -224,13 +288,13 @@
 		{ 
 			"nome":"Wesley",
 			"disciplinas": [
-				"Banco de Dados II",
-				"Teste de Software II",
-				"Fábrica de Software I"
+				"Banco de Dados I",
+				"Teste de Software I",
+				"Fábrica de Software II"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[1,2,3,4],
+				"seg":[],
 				"ter":[1,2,3,4],
 				"qua":[1,2,3,4],
 				"qui":[1,2,3,4],
@@ -241,10 +305,41 @@
 		{ 
 			"nome":"Gilberto",
 			"disciplinas": [
-				"Web Services",
-				"Fábrica de Software III",
-                "Tópicos Especiais II",
-                "Dispositivos Móveis II"
+				"Fábrica de Software IV",
+				"Dispositivos Móveis II"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Marco",
+			"disciplinas": [
+				"Programação Web: front-end",
+				"Programação Web: back-end",
+				"Tópicos Especiais II",
+				"Arquitetura de Software"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Valéria",
+			"disciplinas": [
+				"Fundamentos em Negócios"
 			],
 			"horarios": {
 				"dom":[],
@@ -257,25 +352,9 @@
 			}
 		},
 		{ 
-			"nome":"Marco",
-			"disciplinas": [
-                "Linguagens de Programação",
-                "Frameworks para Front-end",
-                "Fábrica de Software III"
-			],
-			"horarios": {
-				"dom":[],
-				"seg":[1,2,3,4],
-				"ter":[1,2,3,4],
-				"qua":[1,2,3,4],
-				"qui":[],
-				"sex":[],
-				"sab":[]
-			}
-		},
-		{ 
 			"nome":"Rosa",
 			"disciplinas": [
+				"Relações Étnico-Raciais",
 				"Orientações para o Trabalho de Conclusão de Curso"
 			],
 			"horarios": {
@@ -291,7 +370,7 @@
 		{ 
 			"nome":"Edilberto",
 			"disciplinas": [
-				"Estatística"
+				"Matemática Computacional"
 			],
 			"horarios": {
 				"dom":[],
@@ -322,6 +401,21 @@
 			"nome":"Alvino",
 			"disciplinas": [
 				"Ética, Sociedade e Sustentabilidade"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Hedi",
+			"disciplinas": [
+				"Dispositivos Móveis I"
 			],
 			"horarios": {
 				"dom":[],

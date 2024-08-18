@@ -281,12 +281,12 @@ func printarHorario(quadro []int) {
 				idDisciplina := quadro[toQuadroIndex(turma,dia,tempo)]
 				if idDisciplina > 0 {
 					//fmt.Print(disciplinas[idDisciplina-1].Nome[0:8],"\t")
-					fmt.Print(disciplinas[idDisciplina-1].Nome,"\t")
+					fmt.Print(disciplinas[idDisciplina-1].Nome,"\t;")
 				} else {
 					if idDisciplina == 0 {
-						fmt.Print("????????","\t")
+						fmt.Print("????????","\t;")
 					} else {
-						fmt.Print("--------","\t")
+						fmt.Print("--------","\t;")
 					}
 				}
 				
