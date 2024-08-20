@@ -274,6 +274,13 @@ func loadJson(caminho string) error {
 	return nil
 }
 
+func trimToSize(str string, size int) string {
+	if len(str) > size {
+		return str[0:size]
+	}
+	return str
+}
+
 func printarHorario(quadro []int) {
 	for turma := 0; turma < len(turmas); turma++ {
 		for tempo := 0; tempo < nTempos; tempo++ {
@@ -281,12 +288,12 @@ func printarHorario(quadro []int) {
 				idDisciplina := quadro[toQuadroIndex(turma,dia,tempo)]
 				if idDisciplina > 0 {
 					//fmt.Print(disciplinas[idDisciplina-1].Nome[0:8],"\t")
-					fmt.Print(disciplinas[idDisciplina-1].Nome,"\t;")
+					fmt.Printf("%-32s\t",trimToSize(disciplinas[idDisciplina-1].Nome,32))
 				} else {
 					if idDisciplina == 0 {
-						fmt.Print("????????","\t;")
+						fmt.Print("????????","\t")
 					} else {
-						fmt.Print("--------","\t;")
+						fmt.Print("--------","\t")
 					}
 				}
 				
