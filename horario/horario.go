@@ -415,13 +415,34 @@ func podeDisciplina(idDisciplina int,idTurma int ,dia int, tempo int) bool {
 	// As aulas devem ser agrupadas de acordo com o especificado
 	// Regra só funciona no horário atual, depois tem que ver isso
 	if disciplina.Agrupar == 2 {
-		_index := toQuadroIndex(idTurma,dia,tempo+1)
-		if (tempo == 0 || tempo == 2) && (quadro[_index] > 0 && quadro[_index]-1 != idDisciplina) {
-			return false
+		if tempo == 0 || tempo == 2 {
+			// Verifica se o tempo depois desse não é da mesma disciplina
+			_index := toQuadroIndex(idTurma,dia,tempo+1)
+			if quadro[_index] > 0 && quadro[_index]-1 != idDisciplina {
+				return false
+			}
 		}
-		_index = toQuadroIndex(idTurma,dia,tempo-1)
-		if (tempo == 1 || tempo == 3) && (quadro[_index] > 0 && quadro[_index]-1 != idDisciplina) {
-			return false
+
+		if tempo == 1 || tempo == 3 {
+			// Verifica se o tempo antes desse não é da mesma disciplina
+			_index := toQuadroIndex(idTurma,dia,tempo-1)
+			if quadro[_index] > 0 && quadro[_index]-1 != idDisciplina {
+				return false
+			}
+		}
+
+		if tempo == 0 || tempo == 1 {
+			// Impedir que fique 4 seguidas
+			if getQuadroValor(idTurma,dia,3)-1 == idDisciplina &&
+			   getQuadroValor(idTurma,dia,4)-1 == idDisciplina {
+				return false
+			}
+		} else {
+			// Impedir que fique 4 seguidas
+			if getQuadroValor(idTurma,dia,0)-1 == idDisciplina &&
+				getQuadroValor(idTurma,dia,1)-1 == idDisciplina {
+				return false
+			}	
 		}
 	}
 	if disciplina.Agrupar == 4 && disciplina.contAulas > 0 {
