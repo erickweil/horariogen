@@ -1,0 +1,14 @@
+Linguagens de Programação	Fábrica de Software I	Linguagens de Programação	Banco de Dados II	Banco de Dados II
+Linguagens de Programação	Fábrica de Software I	Linguagens de Programação	Banco de Dados II	Banco de Dados II
+Engenharia de Software	Fábrica de Software I	Redes de Computadores	Engenharia de Software	Sistemas Operacionais
+Engenharia de Software	Fábrica de Software I	Redes de Computadores	Engenharia de Software	Sistemas Operacionais
+
+Devops e Cloud II	Fábrica de Software III	Estatística	Web Services	Estrutura de Dados II
+Devops e Cloud II	Fábrica de Software III	Estatística	Web Services	Estrutura de Dados II
+Frameworks para Front-end	Fábrica de Software III	Frameworks para Front-end	Estatística	Teste de Software II
+Frameworks para Front-end	Fábrica de Software III	Frameworks para Front-end	Estatística	Teste de Software II
+
+Libras	Ética, Sociedade e Sustentabili	Orientações para o Trabalho de	Inteligência Artificial	Dispositivos Móveis II
+Libras	Ética, Sociedade e Sustentabili	Orientações para o Trabalho de	Inteligência Artificial	Dispositivos Móveis II
+Arquitetura de Software	Inteligência Artificial	Libras	Tópicos Especiais II	Tópicos Especiais II
+Arquitetura de Software	Inteligência Artificial	Libras	Tópicos Especiais II	Tópicos Especiais II

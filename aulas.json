@@ -289,16 +289,16 @@
 			}
 		},
 		{ 
-			"nome":"Edilberto",
+			"nome":"Pinho",
 			"disciplinas": [
 				"Estatística"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[1,2,3,4],
-				"ter":[1,2,3,4],
+				"seg":[],
+				"ter":[],
 				"qua":[1,2,3,4],
-				"qui":[],
+				"qui":[1,2,3,4],
 				"sex":[],
 				"sab":[]
 			}
