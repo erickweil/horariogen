@@ -1,17 +1,6 @@
 {
 	"turmas": [
 		{
-			"nome": "Turma 2025",
-			"horarios": {
-				"dom":[],
-				"seg":[1,2,3,4],
-				"ter":[1,2,3,4],
-				"qua":[1,2,3,4],
-				"qui":[1,2,3,4],
-				"sex":[1,2,3,4],
-				"sab":[]
-			}
-		}, {
 			"nome": "Turma 2024",
 			"horarios": {
 				"dom":[],
@@ -33,145 +22,149 @@
 				"sex":[1,2,3,4],
 				"sab":[]
 			}
+		}, {
+			"nome": "Turma 2022",
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
 		}
 	],
 	"disciplinas": [
-		{
-			"nome": "Fundamentos de Tecnologia da Informação",
-			"turma": "Turma 2025",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Algoritmos e Lógica de Programação",
-			"turma": "Turma 2025",
-			"aulas": 4,
-			"agrupar": 2
-		},
-		{
-			"nome": "Matemática Computacional",
-			"turma":"Turma 2025",
-			"aulas": 4,
-			"agrupar": 2
-		},
-		{
-			"nome": "Organização de computadores",
-			"turma":"Turma 2025",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Relações Étnico-Raciais",
-			"turma":"Turma 2025",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Fundamentos em Negócios",
-			"turma":"Turma 2025",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Banco de dados I",
-			"turma":"Turma 2025",
-			"aulas": 4
-			
-		},
-
-
-		{
-			"nome": "Estrutura de dados I",
-			"turma":"Turma 2024",
-			"aulas": 2,
-			"agrupar": 2
-		},
 		{ 
-			"nome":"Orientação a objetos",
+			"nome":"Linguagens de Programação",
 			"turma": "Turma 2024",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Devops e Cloud I",
+			"nome":"Redes de Computadores",
 			"turma": "Turma 2024",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Teste de Software I",
+			"nome":"Sistemas Operacionais",
 			"turma": "Turma 2024",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Programação Web: front-end",
+			"nome":"Banco de Dados II",
 			"turma": "Turma 2024",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Programação Web: back-end",
+			"nome":"Engenharia de Software",
 			"turma": "Turma 2024",
-			"aulas": 2,
+			"aulas": 4,
 			"agrupar": 2
 		},
 		{ 
-			"nome":"Fábrica de software II",
+			"nome":"Fábrica de Software I",
 			"turma": "Turma 2024",
 			"aulas": 4,
 			"agrupar": 4
 		},
 
-		{
-			"nome": "Ciência de dados",
+        {
+			"nome":"Estrutura de Dados II",
 			"turma": "Turma 2023",
 			"aulas": 2,
 			"agrupar": 2
 		},
-		{
-			"nome": "Tópicos Especiais I",
-			"turma": "Turma 2023",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Metodologia Científica para Computação",
-			"turma": "Turma 2023",
-			"aulas": 2,
-			"agrupar": 2
-		},
-		{
-			"nome": "Internet das Coisas",
+        {
+			"nome":"Estatística",
 			"turma": "Turma 2023",
 			"aulas": 4,
 			"agrupar": 2
 		},
 		{
-			"nome": "Dispositivos Móveis I",
-			"turma": "Turma 2023",
-			"aulas": 4,
-			"agrupar": 2
-		},
-		{
-			"nome": "Dispositivos Móveis II",
+			"nome":"Devops e Cloud II",
 			"turma": "Turma 2023",
 			"aulas": 2,
 			"agrupar": 2
 		},
 		{
-			"nome": "Fábrica de Software IV",
+			"nome":"Teste de Software II",
+			"turma": "Turma 2023",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Frameworks para Front-end",
+			"turma": "Turma 2023",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Web Services",
+			"turma": "Turma 2023",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Fábrica de Software III",
 			"turma": "Turma 2023",
 			"aulas": 4,
 			"agrupar": 4
+		},
+		
+		{
+			"nome":"Dispositivos Móveis II",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Libras",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Tópicos Especiais II",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Ética, Sociedade e Sustentabilidade",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Inteligência Artificial",
+			"turma": "Turma 2022",
+			"aulas": 4,
+			"agrupar": 2
+		},
+		{
+			"nome":"Arquitetura de Software",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
+		},
+		{
+			"nome":"Orientações para o Trabalho de Conclusão de Curso",
+			"turma": "Turma 2022",
+			"aulas": 2,
+			"agrupar": 2
 		}
 	],
 	"disciplinas_unidas": [
 		{
 			"grupo": "Fábrica de Software",
 			"disciplinas": [
-				"Fábrica de software II",
-				"Fábrica de Software IV"
+				"Fábrica de Software I",
+				"Fábrica de Software III"
 			]
 		}
 	],
@@ -179,15 +172,14 @@
 		{ 
 			"nome":"Roberto",
 			"disciplinas": [
-				"Fundamentos de Tecnologia da Informação",
-				"Organização de computadores",
-				"Fábrica de software II",
-				"Tópicos Especiais I",
-				"Internet das Coisas"
+				"Redes de Computadores",
+                "Sistemas Operacionais",
+                "Fábrica de Software I",
+                "Orientações para o Trabalho de Conclusão de Curso"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[1,2,3,4],
+				"seg":[],
 				"ter":[1,2,3,4],
 				"qua":[1,2,3,4],
 				"qui":[],
@@ -198,17 +190,17 @@
 		{ 
 			"nome":"Erick",
 			"disciplinas": [
-                "Algoritmos e Lógica de Programação",
-				"Estrutura de dados I",
-				"Devops e Cloud I",
-				"Fábrica de software II"
+                "Estrutura de Dados II",
+                "Devops e Cloud II",
+                "Fábrica de Software III",
+                "Arquitetura de Software"
 			],
 			"horarios": {
 				"dom":[],
 				"seg":[1,2,3,4],
 				"ter":[1,2,3,4],
 				"qua":[],
-				"qui":[3,4],
+				"qui":[],
 				"sex":[1,2,3,4],
 				"sab":[]
 			}
@@ -216,7 +208,8 @@
 		{ 
 			"nome":"Lucas",
 			"disciplinas": [
-                "Ciência de dados"
+                "Engenharia de Software",
+                "Inteligência Artificial"
 			],
 			"horarios": {
 				"dom":[],
@@ -231,9 +224,9 @@
 		{ 
 			"nome":"Wesley",
 			"disciplinas": [
-				"Banco de dados I",
-				"Teste de Software I",
-				"Fábrica de software II"
+				"Banco de Dados II",
+				"Teste de Software II",
+				"Fábrica de Software I"
 			],
 			"horarios": {
 				"dom":[],
@@ -248,11 +241,10 @@
 		{ 
 			"nome":"Gilberto",
 			"disciplinas": [
-				"Orientação a objetos",
-				"Programação Web: back-end",
-				"Dispositivos Móveis I",
-				"Dispositivos Móveis II",
-				"Fábrica de Software IV"
+				"Web Services",
+				"Fábrica de Software III",
+                "Tópicos Especiais II",
+                "Dispositivos Móveis II"
 			],
 			"horarios": {
 				"dom":[],
@@ -264,12 +256,12 @@
 				"sab":[]
 			}
 		},
-		{
+		{ 
 			"nome":"Marco",
 			"disciplinas": [
-                "Programação Web: front-end",
-				"Metodologia Científica para Computação",
-				"Fábrica de Software IV"
+                "Linguagens de Programação",
+                "Frameworks para Front-end",
+                "Fábrica de Software III"
 			],
 			"horarios": {
 				"dom":[],
@@ -281,18 +273,17 @@
 				"sab":[]
 			}
 		},
-		{
+		{ 
 			"nome":"Rosa",
 			"disciplinas": [
-				"Relações Étnico-Raciais",
-				"Metodologia Científica para Computação"
+				"Orientações para o Trabalho de Conclusão de Curso"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[1,2,3,4],
+				"seg":[],
 				"ter":[1,2,3,4],
-				"qua":[],
-				"qui":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[],
 				"sex":[],
 				"sab":[]
 			}
@@ -300,29 +291,44 @@
 		{ 
 			"nome":"Pinho",
 			"disciplinas": [
-				"Matemática Computacional"
+				"Estatística"
 			],
 			"horarios": {
 				"dom":[],
 				"seg":[],
 				"ter":[],
 				"qua":[1,2,3,4],
-				"qui":[],
+				"qui":[1,2,3,4],
 				"sex":[],
 				"sab":[]
 			}
 		},
 		{ 
-			"nome":"Valéria",
+			"nome":"Vera",
 			"disciplinas": [
-				"Fundamentos em Negócios"
+				"Libras"
 			],
 			"horarios": {
 				"dom":[],
-				"seg":[1,2],
-				"ter":[1,2],
-				"qua":[],
-				"qui":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
+				"sex":[1,2,3,4],
+				"sab":[]
+			}
+		},
+		{ 
+			"nome":"Alvino",
+			"disciplinas": [
+				"Ética, Sociedade e Sustentabilidade"
+			],
+			"horarios": {
+				"dom":[],
+				"seg":[1,2,3,4],
+				"ter":[1,2,3,4],
+				"qua":[1,2,3,4],
+				"qui":[1,2,3,4],
 				"sex":[],
 				"sab":[]
 			}

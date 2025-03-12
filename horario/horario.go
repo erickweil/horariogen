@@ -484,16 +484,16 @@ func ExecHorario() {
 
 	defer utils.TimeTrack(time.Now(),"Horario")
 
-	/*iter, solved := pencilmark.SolucionarQuadro(quadro,len(disciplinas),regrasHorario)
+	iter, solved := pencilmark.SolucionarQuadro(quadro,len(disciplinas),regrasHorario)
 	if solved {
 		fmt.Println("Solucionado! iter:",iter)
 		printarHorario(quadro)
 	} else {
 		fmt.Println("Não conseguiu solucionar iter:",iter)
 		printarHorario(quadro)
-	}*/
+	}
 
-	var iter int = 0
+	/*var iter int = 0
 	solucoes := pencilmark.SolucionarQuadroSemParar(quadro,&iter,len(disciplinas),regrasHorario,nil)
 	if solucoes != nil {
 		for i:=0; i< len(solucoes) && i < 10; i++{
@@ -504,5 +504,5 @@ func ExecHorario() {
 	} else {
 		fmt.Println("Não conseguiu solucionar!")
 		printarHorario(quadro)
-	}
+	}*/
 }

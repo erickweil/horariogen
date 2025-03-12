@@ -1,14 +1,49 @@
-Linguagens de Programação	Fábrica de Software I	Linguagens de Programação	Banco de Dados II	Banco de Dados II
-Linguagens de Programação	Fábrica de Software I	Linguagens de Programação	Banco de Dados II	Banco de Dados II
-Engenharia de Software	Fábrica de Software I	Redes de Computadores	Engenharia de Software	Sistemas Operacionais
-Engenharia de Software	Fábrica de Software I	Redes de Computadores	Engenharia de Software	Sistemas Operacionais
+OK
+Horario
+Carregou 3 turmas, 21 disciplinas, 9 professores, Horario: 4 Tempos, 84 espaços no quadro
+Turma 2025: 20 aulas
+Turma 2024: 20 aulas
+Turma 2023: 20 aulas
+Solucionado! iter: 824
+--------	Banco de dados I                	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I               	Algoritmos e Lógica de Programa 	--------	
+--------	Banco de dados I                	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I               	Algoritmos e Lógica de Programa 	--------	
+--------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
+--------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
 
-Devops e Cloud II	Fábrica de Software III	Estatística	Web Services	Estrutura de Dados II
-Devops e Cloud II	Fábrica de Software III	Estatística	Web Services	Estrutura de Dados II
-Frameworks para Front-end	Fábrica de Software III	Frameworks para Front-end	Estatística	Teste de Software II
-Frameworks para Front-end	Fábrica de Software III	Frameworks para Front-end	Estatística	Teste de Software II
+--------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
+--------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
+--------	Estrutura de dados I               	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I            	--------	
+--------	Estrutura de dados I               	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I            	--------	
 
-Libras	Ética, Sociedade e Sustentabili	Orientações para o Trabalho de	Inteligência Artificial	Dispositivos Móveis II
-Libras	Ética, Sociedade e Sustentabili	Orientações para o Trabalho de	Inteligência Artificial	Dispositivos Móveis II
-Arquitetura de Software	Inteligência Artificial	Libras	Tópicos Especiais II	Tópicos Especiais II
-Arquitetura de Software	Inteligência Artificial	Libras	Tópicos Especiais II	Tópicos Especiais II
+--------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
+--------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
+--------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------	
+--------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------
+
+
+
+OK
+Horario
+Carregou 3 turmas, 21 disciplinas, 9 professores, Horario: 4 Tempos, 84 espaços no quadro
+Turma 2025: 20 aulas
+Turma 2024: 20 aulas
+Turma 2023: 20 aulas
+iter: 10000
+iter: 20000
+iter: 30000
+iter: 40000
+Solucionado! iter: 49306
+--------	Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I                	--------	
+--------	Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I                	--------	
+--------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
+--------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
+
+--------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
+--------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
+--------	Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I                	--------	
+--------	Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I                	--------	
+
+--------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
+--------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
+--------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------	
+--------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------
