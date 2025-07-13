@@ -1,6 +1,6 @@
 // src/App.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
   Container,
@@ -25,9 +25,11 @@ import {
   Stack,
   Divider,
   TextField,
-  IconButton
+  IconButton,
+  createFilterOptions
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useForm, SubmitHandler, FormProvider, useFormContext, useFieldArray, Controller } from "react-hook-form"
 import { aulas as dadosPadrao } from './aulas';
 
 // --- Configurações da Aplicação ---
@@ -98,24 +100,6 @@ const TabelaHorariosCheckbox = ({ horarios, onHorarioChange }) => {
   );
 };
 
-
-// --- Funções Genéricas de Manipulação dos Arrays de Estado ---
-const handleStateChange = (setter, index, field, value) => {
-setter(prevState => {
-    const newState = [...prevState];
-    newState[index] = { ...newState[index], [field]: value };
-    return newState;
-});
-};
-
-const handleAddItem = (setter, newItem) => {
-setter(prevState => [...prevState, newItem]);
-};
-
-const handleRemoveItem = (setter, index) => {
-setter(prevState => prevState.filter((_, i) => i !== index));
-};
-
 // --- Componente Principal da Aplicação ---
 function App() {
 //const dadosIniciais = localStorage.getItem('dadosGeracaoHorario') ? JSON.parse(localStorage.getItem('dadosGeracaoHorario')) : dadosPadrao;
@@ -126,11 +110,12 @@ function App() {
         else return dadosPadrao; // Retorna os dados padrão se não houver no localStorage
     }, []);
 
-  // --- Estados para os dados da aplicação ---
-  const [turmas, setTurmas] = useState(dadosIniciais.turmas);
-  const [disciplinas, setDisciplinas] = useState(dadosIniciais.disciplinas);
-  const [professores, setProfessores] = useState(dadosIniciais.professores);
-  const [disciplinas_unidas, setDisciplinasUnidas] = useState(dadosIniciais.disciplinas_unidas);
+    // 1. Inicializa o react-hook-form com todos os dados iniciais
+  // Todos os useState para dados do formulário foram removidos!
+  const methods = useForm({
+    defaultValues: dadosIniciais
+  });
+  const { control, register, watch } = methods;
 
   // --- Estados para a API e exibição do resultado ---
   const [jobId, setJobId] = useState(null);
@@ -138,27 +123,57 @@ function App() {
   const [error, setError] = useState(null);
   const [horarioGerado, setHorarioGerado] = useState(null);
 
+  const [professoresCores, setProfessoresCores] = useState({});
+  const [professoresDisciplinas, setProfessoresDisciplinas] = useState({});
+
+  const { fields: turmas, append: addTurmas, remove: removeTurmas } = useFieldArray({
+    control,
+    name: "turmas" // O "caminho" para o array nos dados do formulário
+  });
+
+  const { fields: disciplinas, append: addDisciplinas, remove: removeDisciplinas } = useFieldArray({
+    control,
+    name: "disciplinas" // O "caminho" para o array nos dados do formulário
+  });
+
+ const { fields: disciplinas_unidas, append: addDisciplinasUnidas, remove: removeDisciplinasUnidas } = useFieldArray({
+    control,
+    name: "disciplinas_unidas" // O "caminho" para o array nos dados do formulário
+    });
+
+  const { fields: professores, append: addProfessores, remove: removeProfessores } = useFieldArray({
+    control,
+    name: "professores" // O "caminho" para o array nos dados do formulário
+  });
+
   // --- Função para iniciar a geração do horário ---
-  const handleGerarHorario = async () => {
+  const handleGerarHorario = async (formData) => {
     setIsLoading(true);
     setError(null);
     setHorarioGerado(null);
     setJobId(null);
 
-    const dadosParaApi = {
-      turmas,
-      disciplinas,
-      professores,
-      disciplinas_unidas
-    };
+    
+    const professoresCores = {};
+    const professoresDisciplinas = {};
+    formData.professores.forEach((prof, index) => {
+      professoresCores[prof.nome] = PALETA_CORES[index % PALETA_CORES.length];
+      prof.disciplinas.forEach(disc => {
+        if (!professoresDisciplinas[disc]) { // Evita sobreescrever se outra prof. lecionar a mesma disciplina
+          professoresDisciplinas[disc] = prof.nome;
+        }
+      });
+    });
+    setProfessoresCores(professoresCores);
+    setProfessoresDisciplinas(professoresDisciplinas);  
 
     try {
-      console.log('Dados enviados para a API:', dadosParaApi);
+      console.log('Dados enviados para a API:', formData);
       // Salvar no local storage:
-      localStorage.setItem('dadosGeracaoHorario', JSON.stringify(dadosParaApi));
+      localStorage.setItem('dadosGeracaoHorario', JSON.stringify(formData));
 
 
-      const response = await axios.post(`${API_BASE_URL}/horario/jobs`, dadosParaApi);
+      const response = await axios.post(`${API_BASE_URL}/horario/jobs`, formData);
       const { id } = response.data;
       setJobId(id);
     } catch (err) {
@@ -196,34 +211,16 @@ function App() {
   }, [jobId]);
 
   // --- Opções para os Autocompletes ---
-  const turmasOptions = turmas.map(t => t.nome).filter(Boolean);
-  const disciplinasOptions = disciplinas.map(d => d.nome).filter(Boolean);
+  //const turmasOptions = turmas.map(t => t.nome).filter(Boolean);
+  //const disciplinasOptions = disciplinas.map(d => d.nome).filter(Boolean);
 
   // --- NOVO: Adicione estes 'useMemo' para criar os mapas de cores e professores ---
-  
-  // Cria um mapa para associar cada professor a uma cor
-  const professorColorMap = React.useMemo(() => {
-    const map = {};
-    professores.forEach((prof, index) => {
-      map[prof.nome] = PALETA_CORES[index % PALETA_CORES.length];
-    });
-    return map;
-  }, [professores]);
-
-  // Cria um mapa para associar cada disciplina ao seu professor (pegando o primeiro que a leciona)
-  const disciplinaParaProfessorMap = React.useMemo(() => {
-    const map = {};
-    professores.forEach(prof => {
-      prof.disciplinas.forEach(disc => {
-        if (!map[disc]) { // Evita sobreescrever se outra prof. lecionar a mesma disciplina
-          map[disc] = prof.nome;
-        }
-      });
-    });
-    return map;
-  }, [professores]);
-  
+    
   return (
+    // 3. Envolvemos toda a aplicação com o FormProvider
+    <FormProvider {...methods}>
+      {/* 4. Usamos a tag <form> e a função handleSubmit do hook */}
+      <form onSubmit={methods.handleSubmit(handleGerarHorario)}>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h3" component="h1" gutterBottom align="center">
         Gerador de Horários ADS
@@ -244,22 +241,28 @@ function App() {
                     <TextField
                       label="Nome da Turma"
                       fullWidth
-                      value={turma.nome}
-                      onChange={(e) => handleStateChange(setTurmas, index, 'nome', e.target.value)}
                       variant="outlined"
+                      {...register(`turmas.${index}.nome`)} // Caminho para o campo
                     />
-                    <IconButton onClick={() => handleRemoveItem(setTurmas, index)} color="error">
+                    <IconButton onClick={() => removeTurmas(index)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </Stack>
-                  <TabelaHorariosCheckbox 
-                      horarios={turma.horarios} 
-                      onHorarioChange={(h) => handleStateChange(setTurmas, index, 'horarios', h)} 
-                  />
+                  <Controller
+                    control={control}
+                    name={`turmas.${index}.horarios`}
+                    render={({ field }) => (
+                    // O `field` do Controller nos dá { onChange, onBlur, value, ref }
+                    <TabelaHorariosCheckbox
+                        horarios={field.value}
+                        onHorarioChange={field.onChange} // Conectamos o onChange do hook ao nosso componente
+                    />
+                    )}
+                />
                 </Box>
               ))}
             </Stack>
-            <Button sx={{mt: 2}} onClick={() => handleAddItem(setTurmas, { nome: '', horarios: {} })}>
+            <Button sx={{mt: 2}} onClick={() => addTurmas({ nome: '', horarios: {} })}>
               + Adicionar Nova Turma
             </Button>
           </CardContent>
@@ -273,23 +276,53 @@ function App() {
               {disciplinas.map((disciplina, index) => (
                 <Box key={index}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{mb: 2}}>
-                    <TextField label="Nome da Disciplina" fullWidth value={disciplina.nome} onChange={(e) => handleStateChange(setDisciplinas, index, 'nome', e.target.value)} />
-                    <IconButton onClick={() => handleRemoveItem(setDisciplinas, index)} color="error"><DeleteIcon /></IconButton>
+                    <TextField label="Nome da Disciplina" fullWidth
+                        {...register(`disciplinas.${index}.nome`)}
+                    />
+                    <IconButton onClick={() => removeDisciplinas(index)} color="error"><DeleteIcon /></IconButton>
                   </Stack>
-                  <Autocomplete
-                      options={turmasOptions}
-                      value={disciplina.turma || null}
-                      onChange={(e, newValue) => handleStateChange(setDisciplinas, index, 'turma', newValue)}
-                      renderInput={(params) => <TextField {...params} label="Turma" />}
-                  />
+                    <Controller
+                    name={`disciplinas.${index}.turma`}
+                    control={control} // Obtido via useFormContext()
+                    defaultValue={""} 
+                    render={({ field, fieldState: { error } }) => (
+                        <Autocomplete
+                        options={[]}
+                        filterOptions={(options, params) => {
+                            return watch("turmas").map(d => d.nome).filter(Boolean);
+                        }}
+                        value={field.value || []} // Garante que o valor nunca seja undefined
+                        onChange={(event, newValue) => {
+                            field.onChange(newValue);
+                        }}
+                        onBlur={field.onBlur} // Informa ao RHF quando o campo perde o foco
+                        renderInput={(params) => (
+                            <TextField
+                            {...params}
+                            label="Turma"
+                            error={!!error} // Exibe o estado de erro se houver
+                            helperText={error?.message} // Exibe a mensagem de erro da validação
+                            />
+                        )}
+                        />
+                    )}
+                    />
                   <Stack direction="row" spacing={2} sx={{mt: 2}}>
-                      <TextField label="Aulas Semanais" type="number" fullWidth value={disciplina.aulas} onChange={(e) => handleStateChange(setDisciplinas, index, 'aulas', parseInt(e.target.value, 10) || 0)} />
-                      <TextField label="Agrupar Aulas" type="number" fullWidth value={disciplina.agrupar} onChange={(e) => handleStateChange(setDisciplinas, index, 'agrupar', parseInt(e.target.value, 10) || 0)} />
-                  </Stack>
+                    <TextField label="Aulas Semanais" type="number" fullWidth
+                        {...register(`disciplinas.${index}.aulas`, {
+                            valueAsNumber: true
+                        })}
+                    />
+                    <TextField label="Agrupar Aulas" type="number" fullWidth
+                        {...register(`disciplinas.${index}.agrupar`, {
+                            valueAsNumber: true
+                        })}
+                    />
+                   </Stack>
                 </Box>
               ))}
             </Stack>
-            <Button sx={{mt: 2}} onClick={() => handleAddItem(setDisciplinas, { nome: '', turma: null, aulas: 2, agrupar: 2 })}>
+            <Button sx={{mt: 2}} onClick={() => addDisciplinas({ nome: '', turma: null, aulas: 2, agrupar: 2 })}>
               + Adicionar Nova Disciplina
             </Button>
           </CardContent>
@@ -303,20 +336,42 @@ function App() {
                     {disciplinas_unidas.map((grupo, index) => (
                         <Box key={index}>
                             <Stack direction="row" spacing={2} alignItems="center" sx={{mb: 2}}>
-                                <TextField label="Nome do Grupo" fullWidth value={grupo.grupo} onChange={(e) => handleStateChange(setDisciplinasUnidas, index, 'grupo', e.target.value)} />
-                                <IconButton onClick={() => handleRemoveItem(setDisciplinasUnidas, index)} color="error"><DeleteIcon /></IconButton>
+                                <TextField label="Nome do Grupo" fullWidth
+                                {...register(`disciplinas_unidas.${index}.grupo`)}
+                                />
+                                <IconButton onClick={() => removeDisciplinasUnidas(index)} color="error"><DeleteIcon /></IconButton>
                             </Stack>
-                            <Autocomplete
+                            <Controller
+                            name={`disciplinas_unidas.${index}.disciplinas`}
+                            control={control} // Obtido via useFormContext()
+                            defaultValue={[]} 
+                            render={({ field, fieldState: { error } }) => (
+                                <Autocomplete
                                 multiple
-                                options={disciplinasOptions}
-                                value={grupo.disciplinas}
-                                onChange={(e, newValue) => handleStateChange(setDisciplinasUnidas, index, 'disciplinas', newValue)}
-                                renderInput={(params) => <TextField {...params} label="Disciplinas para Unir" />}
+                                options={[]}
+                                filterOptions={(options, params) => {
+                                    return watch("disciplinas").map(d => d.nome).filter(Boolean);
+                                }}
+                                value={field.value || []} // Garante que o valor nunca seja undefined
+                                onChange={(event, newValue) => {
+                                    field.onChange(newValue);
+                                }}
+                                onBlur={field.onBlur} // Informa ao RHF quando o campo perde o foco
+                                renderInput={(params) => (
+                                    <TextField
+                                    {...params}
+                                    label="Disciplinas para Unir"
+                                    error={!!error} // Exibe o estado de erro se houver
+                                    helperText={error?.message} // Exibe a mensagem de erro da validação
+                                    />
+                                )}
+                                />
+                            )}
                             />
                         </Box>
                     ))}
                 </Stack>
-                <Button sx={{mt: 2}} onClick={() => handleAddItem(setDisciplinasUnidas, { grupo: '', disciplinas: [] })}>
+                <Button sx={{mt: 2}} onClick={() => addDisciplinasUnidas({ grupo: '', disciplinas: [] })}>
                     + Adicionar Novo Grupo
                 </Button>
             </CardContent>
@@ -330,25 +385,56 @@ function App() {
                     {professores.map((professor, index) => (
                         <Box key={index}>
                              <Stack direction="row" spacing={2} alignItems="center" sx={{mb: 2}}>
-                                <TextField label="Nome do Professor" fullWidth value={professor.nome} onChange={(e) => handleStateChange(setProfessores, index, 'nome', e.target.value)} />
-                                <IconButton onClick={() => handleRemoveItem(setProfessores, index)} color="error"><DeleteIcon /></IconButton>
+                                <TextField label="Nome do Professor" fullWidth 
+                                    {...register(`professores.${index}.nome`)}
+                                />
+                                <IconButton onClick={() => removeProfessores(index)} color="error"><DeleteIcon /></IconButton>
                             </Stack>
-                             <Autocomplete
+                             
+                            <Controller
+                            name={`professores.${index}.disciplinas`}
+                            control={control} // Obtido via useFormContext()
+                            defaultValue={[]} 
+                            render={({ field, fieldState: { error } }) => (
+                                <Autocomplete
                                 multiple
-                                options={disciplinasOptions}
-                                value={professor.disciplinas}
-                                onChange={(e, newValue) => handleStateChange(setProfessores, index, 'disciplinas', newValue)}
-                                renderInput={(params) => <TextField {...params} label="Disciplinas que o professor ministra" />}
+                                options={[]}
+                                filterOptions={(options, params) => {
+                                    return watch("disciplinas").map(d => d.nome).filter(Boolean);
+                                }}
+                                value={field.value || []} // Garante que o valor nunca seja undefined
+                                onChange={(event, newValue) => {
+                                    field.onChange(newValue);
+                                }}
+                                onBlur={field.onBlur} // Informa ao RHF quando o campo perde o foco
+                                renderInput={(params) => (
+                                    <TextField
+                                    {...params}
+                                    label="Disciplinas que o professor ministra"
+                                    error={!!error} // Exibe o estado de erro se houver
+                                    helperText={error?.message} // Exibe a mensagem de erro da validação
+                                    />
+                                )}
+                                />
+                            )}
                             />
+
                              <Typography variant="subtitle2" sx={{mt: 2, mb: 1}}>Preferências de horários do professor:</Typography>
-                            <TabelaHorariosCheckbox 
-                                horarios={professor.horarios}
-                                onHorarioChange={(h) => handleStateChange(setProfessores, index, 'horarios', h)}
+                            <Controller
+                                control={control}
+                                name={`professores.${index}.horarios`}
+                                render={({ field }) => (
+                                // O `field` do Controller nos dá { onChange, onBlur, value, ref }
+                                <TabelaHorariosCheckbox
+                                    horarios={field.value}
+                                    onHorarioChange={field.onChange} // Conectamos o onChange do hook ao nosso componente
+                                />
+                                )}
                             />
                         </Box>
                     ))}
                 </Stack>
-                <Button sx={{mt: 2}} onClick={() => handleAddItem(setProfessores, { nome: '', disciplinas: [], horarios: {} })}>
+                <Button sx={{mt: 2}} onClick={() => addProfessores({ nome: '', disciplinas: [], horarios: {} })}>
                     + Adicionar Novo Professor
                 </Button>
             </CardContent>
@@ -362,7 +448,7 @@ function App() {
             </Typography>
             <Divider sx={{ my: 2 }}/>
             <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-              <Button variant="contained" color="primary" size="large" onClick={handleGerarHorario} disabled={isLoading}>
+              <Button type="submit" variant="contained" color="primary" size="large" disabled={isLoading}>
                 {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Gerar Horário'}
               </Button>
             </Box>
@@ -405,8 +491,8 @@ function App() {
                                 const horarioDaTurma = resultado.horario;
                                 const diaInfo = horarioDaTurma?.find(h => h.dia === dia);
                                 const disciplina = diaInfo?.tempos[indexTempo];
-                                const professor = disciplina ? disciplinaParaProfessorMap[disciplina] : null;
-                                const cor = professor ? professorColorMap[professor] : 'transparent';
+                                const professor = disciplina ? professoresDisciplinas[disciplina] : null;
+                                const cor = professor ? professoresCores[professor] : 'transparent';
                                 
                                 return (
                                   <TableCell
@@ -439,6 +525,8 @@ function App() {
         </Card>
       </Stack>
     </Container>
+    </form>
+    </FormProvider>
   );
 }
 
