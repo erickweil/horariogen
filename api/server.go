@@ -1,117 +1,18 @@
 package api
 
 import (
-	// "context"
-	//"encoding/json"
 	"fmt"
-	//"math/rand"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/erickweil/horariogen/horario"
 	"github.com/gin-gonic/gin"
-	// "github.com/gin-gonic/gin/binding"
 	"github.com/google/uuid"
+
+	_ "github.com/erickweil/horariogen/docs" // Importa os docs gerados pelo swag
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
-
-//================================================================//
-// 1. MODELOS E TIPOS DE DADOS (Models and Data Types)            //
-//================================================================//
-
-// JobStatus define o estado de um trabalho de processamento.
-type JobStatus string
-
-const (
-	StatusPending   JobStatus = "pending"
-	StatusRunning   JobStatus = "running"
-	StatusCompleted JobStatus = "completed"
-	StatusFailed    JobStatus = "failed"
-)
-
-// Job representa uma tarefa de geração de horário.
-type Job struct {
-	ID          string          `json:"id"`
-	Status      JobStatus       `json:"status"`
-	Config      horario.ArquivoJson `json:"-"` // Oculta a configuração completa na resposta padrão
-	Result      []map[string]interface{} `json:"result,omitempty"`
-	Error       string          `json:"error,omitempty"`
-	CreatedAt   time.Time       `json:"createdAt"`
-	CompletedAt *time.Time      `json:"completedAt,omitempty"`
-}
-
-//================================================================//
-// 2. ARMAZENAMENTO EM MEMÓRIA (In-Memory Job Store)              //
-//================================================================//
-
-// JobStore é um mock para armazenamento de jobs em memória.
-// Ele é seguro para uso concorrente (thread-safe).
-type JobStore struct {
-	mu   sync.RWMutex
-	jobs map[string]*Job
-}
-
-// NewJobStore cria uma nova instância do nosso armazenamento de jobs.
-func NewJobStore() *JobStore {
-	return &JobStore{
-		jobs: make(map[string]*Job),
-	}
-}
-
-// AddJob adiciona um novo job ao armazenamento.
-func (s *JobStore) AddJob(job *Job) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.jobs[job.ID] = job
-}
-
-// GetJob recupera um job pelo seu ID.
-func (s *JobStore) GetJob(id string) (*Job, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	job, found := s.jobs[id]
-	return job, found
-}
-
-// UpdateJob atualiza o estado de um job existente.
-func (s *JobStore) UpdateJob(job *Job) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.jobs[job.ID] = job
-}
-
-//================================================================//
-// 3. LÓGICA DE PROCESSAMENTO (Business Logic / Solver)           //
-//================================================================//
-
-// processHorarioJob é a função que executa o seu código de forma assíncrona.
-// Ela atualiza o status do job conforme progride.
-func (s *JobStore) processHorarioJob(job *Job) {
-	// Atualiza o status para "running"
-	job.Status = StatusRunning
-	s.UpdateJob(job)
-
-	fmt.Printf("Iniciando processamento para o Job ID: %s\n", job.ID)
-
-	resultado, err := horario.ExecHorario(&job.Config)
-	// --------------------------------
-
-	completedTime := time.Now()
-	job.CompletedAt = &completedTime
-
-	if err != nil {
-		fmt.Printf("Job ID: %s falhou: %v\n", job.ID, err)
-		job.Status = StatusFailed
-		job.Error = err.Error()
-	} else {
-		fmt.Printf("Job ID: %s concluído com sucesso!\n", job.ID)
-		job.Status = StatusCompleted
-		job.Result = resultado
-	}
-
-	// Atualiza o job no armazenamento com o resultado final.
-	s.UpdateJob(job)
-}
 
 //================================================================//
 // 4. HANDLERS DA API (API Handlers)                              //
@@ -123,14 +24,15 @@ type Handlers struct {
 }
 
 // StartJobHandler lida com a requisição para iniciar um novo job.
-// @Summary Inicia um novo processamento de horário
-// @Description Recebe uma configuração JSON e inicia a geração do horário de forma assíncrona.
-// @Accept  json
-// @Produce json
-// @Param   config body object true "Configuração JSON das turmas, disciplinas e professores"
-// @Success 202 {object} Job "Job iniciado com sucesso"
-// @Failure 400 {object} object "Erro: corpo da requisição inválido"
-// @Router /horario/jobs [post]
+// @Summary      Inicia um novo processamento de horário
+// @Description  Recebe uma configuração JSON e inicia a geração do horário de forma assíncrona.
+// @Tags         Jobs
+// @Accept       json
+// @Produce      json
+// @Param        config  body      horario.ArquivoJson  true  "Configuração JSON das turmas, disciplinas e professores"
+// @Success      202     {object}  Job                  "Job iniciado com sucesso"
+// @Failure      400     {object}  object{error=string} "Erro: corpo da requisição inválido"
+// @Router       /horario/jobs [post]
 func (h *Handlers) StartJobHandler(c *gin.Context) {
 	/*var config json.RawMessage
 	if err := c.ShouldBindJSON(&config); err != nil {
@@ -162,13 +64,14 @@ func (h *Handlers) StartJobHandler(c *gin.Context) {
 }
 
 // GetJobStatusHandler lida com a requisição para verificar o status de um job.
-// @Summary Verifica o status de um job
-// @Description Recupera o status e o resultado (se disponível) de um job de geração de horário.
-// @Produce json
-// @Param   id   path      string  true  "Job ID"
-// @Success 200 {object} Job "Status e resultado do Job"
-// @Failure 404 {object} object "Erro: job não encontrado"
-// @Router /horario/jobs/{id} [get]
+// @Summary      Verifica o status de um job
+// @Description  Recupera o status e o resultado (se disponível) de um job de geração de horário.
+// @Tags         Jobs
+// @Produce      json
+// @Param        id   path      string               true  "Job ID"
+// @Success      200  {object}  Job                  "Status e resultado do Job"
+// @Failure      404  {object}  object{error=string} "Erro: job não encontrado"
+// @Router       /horario/jobs/{id} [get]
 func (h *Handlers) GetJobStatusHandler(c *gin.Context) {
 	jobID := c.Param("id")
 
@@ -186,6 +89,21 @@ func (h *Handlers) GetJobStatusHandler(c *gin.Context) {
 // 5. FUNÇÃO PRINCIPAL (Main Function)                            //
 //================================================================//
 
+
+// @title           API HorarioGen
+// @version         1.0
+// @description     Esta é uma API para geração de horários escolares de forma assíncrona.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Seu Nome
+// @contact.url    http://www.seusite.com
+// @contact.email  seu@email.com
+
+// @license.name  MIT
+// @license.url   https://opensource.org/licenses/MIT
+
+// @host      localhost:8080
+// @BasePath  /
 func InitAPIServer() {
 	// Inicializa o armazenamento em memória
 	jobStore := NewJobStore()
@@ -205,15 +123,15 @@ func InitAPIServer() {
 		api.POST("/jobs", handlers.StartJobHandler)
 		api.GET("/jobs/:id", handlers.GetJobStatusHandler)
 	}
-    
-    // Rota raiz para health check
-    router.GET("/", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "message": "Servidor HorarioGen API está no ar!",
-        })
-    })
 
-	fmt.Println("Servidor HorarioGen API iniciado em http://localhost:8080")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	// Redirect para a documentação Swagger
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/swagger/index.html")
+	})
+    
+    fmt.Println("Servidor HorarioGen API iniciado em http://localhost:8080")
+
 	// Inicia o servidor na porta 8080
 	if err := router.Run(":8080"); err != nil {
 		fmt.Printf("Erro ao iniciar o servidor: %v\n", err)

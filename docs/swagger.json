@@ -1,0 +1,272 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/horario/jobs": {
+            "post": {
+                "description": "Recebe uma configuração JSON e inicia a geração do horário de forma assíncrona.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jobs"
+                ],
+                "summary": "Inicia um novo processamento de horário",
+                "parameters": [
+                    {
+                        "description": "Configuração JSON das turmas, disciplinas e professores",
+                        "name": "config",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/horario.ArquivoJson"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Job iniciado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/api.Job"
+                        }
+                    },
+                    "400": {
+                        "description": "Erro: corpo da requisição inválido",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/horario/jobs/{id}": {
+            "get": {
+                "description": "Recupera o status e o resultado (se disponível) de um job de geração de horário.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jobs"
+                ],
+                "summary": "Verifica o status de um job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Job ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status e resultado do Job",
+                        "schema": {
+                            "$ref": "#/definitions/api.Job"
+                        }
+                    },
+                    "404": {
+                        "description": "Erro: job não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.Job": {
+            "type": "object",
+            "properties": {
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/api.JobStatus"
+                }
+            }
+        },
+        "api.JobStatus": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "running",
+                "completed",
+                "failed"
+            ],
+            "x-enum-varnames": [
+                "StatusPending",
+                "StatusRunning",
+                "StatusCompleted",
+                "StatusFailed"
+            ]
+        },
+        "horario.ArquivoJson": {
+            "type": "object",
+            "properties": {
+                "disciplinas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horario.Disciplina"
+                    }
+                },
+                "disciplinas_unidas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horario.DisciplinaUnida"
+                    }
+                },
+                "professores": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horario.Professor"
+                    }
+                },
+                "turmas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horario.Turma"
+                    }
+                }
+            }
+        },
+        "horario.Disciplina": {
+            "type": "object",
+            "properties": {
+                "agrupar": {
+                    "type": "integer"
+                },
+                "aulas": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "turma": {
+                    "type": "string"
+                }
+            }
+        },
+        "horario.DisciplinaUnida": {
+            "type": "object",
+            "properties": {
+                "disciplinas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "grupo": {
+                    "type": "string"
+                }
+            }
+        },
+        "horario.Horario": {
+            "type": "object",
+            "properties": {
+                "dom": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "qua": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "qui": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "sab": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seg": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "sex": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "ter": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "horario.Professor": {
+            "type": "object",
+            "properties": {
+                "disciplinas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "horarios": {
+                    "$ref": "#/definitions/horario.Horario"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "horario.Turma": {
+            "type": "object",
+            "properties": {
+                "horarios": {
+                    "$ref": "#/definitions/horario.Horario"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

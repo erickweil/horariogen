@@ -1,0 +1,180 @@
+definitions:
+  api.Job:
+    properties:
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      error:
+        type: string
+      id:
+        type: string
+      result:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      status:
+        $ref: '#/definitions/api.JobStatus'
+    type: object
+  api.JobStatus:
+    enum:
+    - pending
+    - running
+    - completed
+    - failed
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusRunning
+    - StatusCompleted
+    - StatusFailed
+  horario.ArquivoJson:
+    properties:
+      disciplinas:
+        items:
+          $ref: '#/definitions/horario.Disciplina'
+        type: array
+      disciplinas_unidas:
+        items:
+          $ref: '#/definitions/horario.DisciplinaUnida'
+        type: array
+      professores:
+        items:
+          $ref: '#/definitions/horario.Professor'
+        type: array
+      turmas:
+        items:
+          $ref: '#/definitions/horario.Turma'
+        type: array
+    type: object
+  horario.Disciplina:
+    properties:
+      agrupar:
+        type: integer
+      aulas:
+        type: integer
+      nome:
+        type: string
+      turma:
+        type: string
+    type: object
+  horario.DisciplinaUnida:
+    properties:
+      disciplinas:
+        items:
+          type: string
+        type: array
+      grupo:
+        type: string
+    type: object
+  horario.Horario:
+    properties:
+      dom:
+        items:
+          type: integer
+        type: array
+      qua:
+        items:
+          type: integer
+        type: array
+      qui:
+        items:
+          type: integer
+        type: array
+      sab:
+        items:
+          type: integer
+        type: array
+      seg:
+        items:
+          type: integer
+        type: array
+      sex:
+        items:
+          type: integer
+        type: array
+      ter:
+        items:
+          type: integer
+        type: array
+    type: object
+  horario.Professor:
+    properties:
+      disciplinas:
+        items:
+          type: string
+        type: array
+      horarios:
+        $ref: '#/definitions/horario.Horario'
+      nome:
+        type: string
+    type: object
+  horario.Turma:
+    properties:
+      horarios:
+        $ref: '#/definitions/horario.Horario'
+      nome:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /horario/jobs:
+    post:
+      consumes:
+      - application/json
+      description: Recebe uma configuração JSON e inicia a geração do horário de forma
+        assíncrona.
+      parameters:
+      - description: Configuração JSON das turmas, disciplinas e professores
+        in: body
+        name: config
+        required: true
+        schema:
+          $ref: '#/definitions/horario.ArquivoJson'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Job iniciado com sucesso
+          schema:
+            $ref: '#/definitions/api.Job'
+        "400":
+          description: 'Erro: corpo da requisição inválido'
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Inicia um novo processamento de horário
+      tags:
+      - Jobs
+  /horario/jobs/{id}:
+    get:
+      description: Recupera o status e o resultado (se disponível) de um job de geração
+        de horário.
+      parameters:
+      - description: Job ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status e resultado do Job
+          schema:
+            $ref: '#/definitions/api.Job'
+        "404":
+          description: 'Erro: job não encontrado'
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Verifica o status de um job
+      tags:
+      - Jobs
+swagger: "2.0"
