@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/erickweil/horariogen/horario"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
@@ -116,6 +117,9 @@ func InitAPIServer() {
 	// Inicializa o router do Gin
 	router := gin.Default()
 	router.SetTrustedProxies(nil) // Para desenvolvimento
+	// desativa cors
+	router.Use(cors.Default());
+
 
 	// Agrupa as rotas da API
 	api := router.Group("/horario")
