@@ -33,17 +33,17 @@ iter: 20000
 iter: 30000
 iter: 40000
 Solucionado! iter: 49306
---------	Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I                	--------	
---------	Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I                	--------	
---------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
---------	Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores     	--------	
+Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I
+Algoritmos e Lógica de Programa 	Fundamentos em Negócios         	Matemática Computacional        	Banco de dados I                	Banco de dados I
+Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores
+Fundamentos de Tecnologia da Inf	Relações Étnico-Raciais         	Matemática Computacional        	Algoritmos e Lógica de Programa 	Organização de computadores
 
---------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
---------	Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos            	--------	
---------	Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I                	--------	
---------	Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I                	--------	
+Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos
+Programação Web: front-end      	Fábrica de software II          	Programação Web: front-end      	Programação Web: back-end       	Orientação a objetos
+Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I
+Estrutura de dados I            	Fábrica de software II          	Orientação a objetos            	Teste de Software I             	Devops e Cloud I
 
---------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
---------	Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas             	--------	
---------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------	
---------	Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I           	--------
+Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas
+Internet das Coisas             	Fábrica de Software IV          	Dispositivos Móveis I           	Ciência de dados                	Internet das Coisas
+Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I
+Metodologia Científica para Com 	Fábrica de Software IV          	Tópicos Especiais I             	Dispositivos Móveis II          	Dispositivos Móveis I

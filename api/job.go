@@ -26,6 +26,7 @@ const (
 type Job struct {
 	ID          string          `json:"id"`
 	Status      JobStatus       `json:"status"`
+	StatusInfo  string          `json:"statusInfo,omitempty"` // Informação adicional sobre o status
 	Config      horario.ArquivoJson `json:"-"` // Oculta a configuração completa na resposta padrão
 	Result      []map[string]interface{} `json:"result,omitempty"`
 	Error       string          `json:"error,omitempty"`
@@ -82,11 +83,17 @@ func (s *JobStore) UpdateJob(job *Job) {
 func (s *JobStore) processHorarioJob(job *Job) {
 	// Atualiza o status para "running"
 	job.Status = StatusRunning
+	job.StatusInfo = "Processamento iniciado"
 	s.UpdateJob(job)
 
 	fmt.Printf("Iniciando processamento para o Job ID: %s\n", job.ID)
 
-	resultado, err := horario.ExecHorario(&job.Config)
+	resultado, err := horario.ExecHorario(&job.Config, func(iter int, depth int) error {
+		// Progresso 
+		job.StatusInfo = fmt.Sprintf("Processando: %d, (depth: %d)", iter, depth)
+		s.UpdateJob(job)
+		return nil
+	})
 	// --------------------------------
 
 	completedTime := time.Now()
@@ -94,10 +101,12 @@ func (s *JobStore) processHorarioJob(job *Job) {
 
 	if err != nil {
 		fmt.Printf("Job ID: %s falhou: %v\n", job.ID, err)
+		job.StatusInfo = "Erro ao processar: " + err.Error()
 		job.Status = StatusFailed
 		job.Error = err.Error()
 	} else {
 		fmt.Printf("Job ID: %s concluído com sucesso!\n", job.ID)
+		job.StatusInfo = "Processamento concluído com sucesso"
 		job.Status = StatusCompleted
 		job.Result = resultado
 	}

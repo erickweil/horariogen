@@ -138,15 +138,21 @@ func getRandomRange(arr []int) []int {
 	return arr
 }
 
-func SolucionarQuadro(quadro []int,nPossibs int, regrasfn RegrasQuadro) (int, bool) {
+func SolucionarQuadro(quadro []int,nPossibs int, regrasfn RegrasQuadro, progressCallback func(int, int) error) (int, bool) {
 	var iter int = 0
-	return iter,_solucionarQuadro(0,&iter,quadro,nPossibs,regrasfn)
+	return iter,_solucionarQuadro(0,&iter,quadro,nPossibs,regrasfn, progressCallback)
 }
 
-func _solucionarQuadro(depth int, iter *int, quadro []int,nPossibs int, regrasfn RegrasQuadro) bool {
+func _solucionarQuadro(depth int, iter *int, quadro []int,nPossibs int, regrasfn RegrasQuadro, progressCallback func(int, int) error) bool {
 	*iter++
 	if *iter % 10000 == 0 {
-		fmt.Printf("iter: %d\n", *iter)
+		fmt.Printf("iter: %d Depth: %d\n", *iter, depth)
+		if progressCallback != nil {
+			if err := progressCallback(*iter, depth); err != nil {
+				fmt.Println("Erro no callback de progresso:", err)
+				return false
+			}
+		}
 	}
 
 	p, err := obterMelhorPossib(quadro,nPossibs,regrasfn)
@@ -170,7 +176,7 @@ func _solucionarQuadro(depth int, iter *int, quadro []int,nPossibs int, regrasfn
 				return true
 			}
 			// Tenta solucionar com mais escolhas depois dessa, e se der certo retorna true
-			if _solucionarQuadro(depth+1,iter,quadro,nPossibs,regrasfn) {
+			if _solucionarQuadro(depth+1,iter,quadro,nPossibs,regrasfn, progressCallback) {
 				return true
 			}
 
@@ -184,15 +190,22 @@ func _solucionarQuadro(depth int, iter *int, quadro []int,nPossibs int, regrasfn
 	return false
 }
 
-func SolucionarQuadroSemParar(quadro []int, iter *int,nPossibs int, regrasfn RegrasQuadro, results [][]int) [][]int {
+// NÂO FUNCIONA???????
+func SolucionarQuadroSemParar(quadro []int, iter *int,nPossibs int, regrasfn RegrasQuadro, results [][]int, progressCallback func(int, int) error) [][]int {
 	//iter++
 
 	*iter++
 	if *iter % 10000 == 0 {
 		fmt.Printf("iter: %d Soluções: %d\n", *iter, len(results))
+		if progressCallback != nil {
+			if err := progressCallback(*iter, len(results)); err != nil {
+				fmt.Println("Erro no callback de progresso:", err)
+				return results // Retorna os resultados até o momento
+			}
+		}
 	}
 
-	if len(results) > 100{
+	if len(results) > 20 {
 		fmt.Println("Já deu né! Parando...")
 		return results
 	}
@@ -223,7 +236,7 @@ func SolucionarQuadroSemParar(quadro []int, iter *int,nPossibs int, regrasfn Reg
 				//fmt.Println("Solucionado! iter:",iter," Soluções:",len(results))
 			} else {
 				// Se não está solucionado, tenta solucionar com mais escolhas depois dessa
-				results = SolucionarQuadroSemParar(quadro,iter,nPossibs,regrasfn,results)
+				results = SolucionarQuadroSemParar(quadro,iter,nPossibs,regrasfn,results, progressCallback)
 			}
 			// Remove a escolha para tentar outras possibilidades
 			quadro[p.Index] = 0

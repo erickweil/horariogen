@@ -26,14 +26,15 @@ import {
   Divider,
   TextField,
   IconButton,
-  createFilterOptions
+  createFilterOptions,
+  InputLabel
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useForm, SubmitHandler, FormProvider, useFormContext, useFieldArray, Controller } from "react-hook-form"
 import { aulas as dadosPadrao } from './aulas';
 
 // --- Configurações da Aplicação ---
-const QUANTIDADE_TEMPOS = 4;
+const QUANTIDADE_TEMPOS = 2;
 const API_BASE_URL = 'http://localhost:8080';
 const DIAS_SEMANA_MAP = {
   seg: 'Segunda', ter: 'Terça', qua: 'Quarta', qui: 'Quinta', sex: 'Sexta', sab: 'Sábado', dom: 'Domingo'
@@ -56,36 +57,69 @@ const getContrastColor = (hexColor) => {
   return (yiq >= 128) ? '#000' : '#fff';
 };
 
+// Componente auxiliar para o painel da aba (padrão do Material-UI)
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      aria-labelledby={`turma-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ pt: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
 // --- Componente Reutilizável para a Tabela de Horários com Checkboxes ---
 const TabelaHorariosCheckbox = ({ horarios, onHorarioChange }) => {
   const handleCheckboxChange = (dia, tempo) => {
+    // A lógica para atualizar o estado permanece a mesma
     const novosHorarios = { ...horarios };
     const temposDoDia = novosHorarios[dia] || [];
+
     if (temposDoDia.includes(tempo)) {
       novosHorarios[dia] = temposDoDia.filter(t => t !== tempo);
     } else {
+      // Adiciona e ordena para manter a consistência
       novosHorarios[dia] = [...temposDoDia, tempo].sort((a, b) => a - b);
     }
     onHorarioChange(novosHorarios);
   };
+
+  // Cria um array de tempos, por exemplo: [1, 2, 3, 4, 5]
+  const tempos = Array.from({ length: QUANTIDADE_TEMPOS }, (_, i) => i + 1);
 
   return (
     <TableContainer component={Paper} variant="outlined" sx={{ mt: 2 }}>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Dia</TableCell>
-            {Array.from({ length: QUANTIDADE_TEMPOS }, (_, i) => i + 1).map(tempo => (
-              <TableCell key={tempo} align="center">Tempo {tempo}</TableCell>
+            <TableCell>Tempo</TableCell>
+            {/* Cabeçalho com os dias da semana */}
+            {DIAS_SEMANA.map(dia => (
+              <TableCell key={dia} align="center">
+                {DIAS_SEMANA_MAP[dia]}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {DIAS_SEMANA.map(dia => (
-            <TableRow key={dia}>
-              <TableCell>{DIAS_SEMANA_MAP[dia]}</TableCell>
-              {Array.from({ length: QUANTIDADE_TEMPOS }, (_, i) => i + 1).map(tempo => (
-                <TableCell key={tempo} align="center">
+          {/* Linhas com os tempos */}
+          {tempos.map(tempo => (
+            <TableRow key={tempo}>
+              <TableCell component="th" scope="row">
+                {tempo}
+              </TableCell>
+              {/* Colunas com os checkboxes para cada dia */}
+              {DIAS_SEMANA.map(dia => (
+                <TableCell key={`${dia}-${tempo}`} align="center">
                   <Checkbox
                     checked={horarios[dia]?.includes(tempo) || false}
                     onChange={() => handleCheckboxChange(dia, tempo)}
@@ -119,14 +153,15 @@ function App() {
 
   // --- Estados para a API e exibição do resultado ---
   const [jobId, setJobId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(null);
   const [error, setError] = useState(null);
   const [horarioGerado, setHorarioGerado] = useState(null);
+  const [abaAtiva, setAbaAtiva] = useState(0);
 
   const [professoresCores, setProfessoresCores] = useState({});
   const [professoresDisciplinas, setProfessoresDisciplinas] = useState({});
 
-  const { fields: turmas, append: addTurmas, remove: removeTurmas } = useFieldArray({
+  const { fields: turmas, append: addTurmas, remove: removeTurmas, update: updateTurmas } = useFieldArray({
     control,
     name: "turmas" // O "caminho" para o array nos dados do formulário
   });
@@ -148,7 +183,7 @@ function App() {
 
   // --- Função para iniciar a geração do horário ---
   const handleGerarHorario = async (formData) => {
-    setIsLoading(true);
+    setIsLoading({});
     setError(null);
     setHorarioGerado(null);
     setJobId(null);
@@ -165,7 +200,20 @@ function App() {
       });
     });
     setProfessoresCores(professoresCores);
-    setProfessoresDisciplinas(professoresDisciplinas);  
+    setProfessoresDisciplinas(professoresDisciplinas);
+
+    // corrigir tempos
+    for(let turmas of formData.turmas) {
+      for(let dia in turmas.horarios) {
+        turmas.horarios[dia] = turmas.horarios[dia].filter(tempo => tempo <= QUANTIDADE_TEMPOS);
+      }
+    }
+
+    for(let professor of formData.professores) {
+      for(let dia in professor.horarios) {
+        professor.horarios[dia] = professor.horarios[dia].filter(tempo => tempo <= QUANTIDADE_TEMPOS);
+      }
+    }
 
     try {
       console.log('Dados enviados para a API:', formData);
@@ -176,9 +224,10 @@ function App() {
       const response = await axios.post(`${API_BASE_URL}/horario/jobs`, formData);
       const { id } = response.data;
       setJobId(id);
+      setIsLoading(response.data);
     } catch (err) {
       setError('Falha ao iniciar a geração do horário. Verifique se a API está rodando e o CORS está configurado.');
-      setIsLoading(false);
+      setIsLoading(null);
     }
   };
 
@@ -193,19 +242,21 @@ function App() {
 
         if (status === 'completed') {
           setHorarioGerado(result);
-          setIsLoading(false);
+          setIsLoading(null);
           clearInterval(intervalId);
         } else if (status === 'failed') {
-          setError('Ocorreu um erro na API ao gerar o horário.');
-          setIsLoading(false);
+          setError('Ocorreu um erro na API ao gerar o horário:'+ JSON.stringify(response.data, null, 2));
+          setIsLoading(null);
           clearInterval(intervalId);
+        } else {
+          setIsLoading(response.data);
         }
       } catch (err) {
         setError('Falha ao consultar o status do job.');
-        setIsLoading(false);
+        setIsLoading(null);
         clearInterval(intervalId);
       }
-    }, 2000); 
+    }, 500); 
 
     return () => clearInterval(intervalId);
   }, [jobId]);
@@ -272,57 +323,70 @@ function App() {
         <Card variant="outlined">
           <CardContent>
             <Typography variant="h5" component="h2" gutterBottom>2. Disciplinas</Typography>
-            <Stack spacing={3} divider={<Divider />}>
-              {disciplinas.map((disciplina, index) => (
-                <Box key={index}>
-                  <Stack direction="row" spacing={2} alignItems="center" sx={{mb: 2}}>
-                    <TextField label="Nome da Disciplina" fullWidth
-                        {...register(`disciplinas.${index}.nome`)}
-                    />
-                    <IconButton onClick={() => removeDisciplinas(index)} color="error"><DeleteIcon /></IconButton>
-                  </Stack>
-                    <Controller
-                    name={`disciplinas.${index}.turma`}
-                    control={control} // Obtido via useFormContext()
-                    defaultValue={""} 
-                    render={({ field, fieldState: { error } }) => (
-                        <Autocomplete
-                        options={[]}
-                        filterOptions={(options, params) => {
-                            return watch("turmas").map(d => d.nome).filter(Boolean);
-                        }}
-                        value={field.value || []} // Garante que o valor nunca seja undefined
-                        onChange={(event, newValue) => {
-                            field.onChange(newValue);
-                        }}
-                        onBlur={field.onBlur} // Informa ao RHF quando o campo perde o foco
-                        renderInput={(params) => (
-                            <TextField
-                            {...params}
-                            label="Turma"
-                            error={!!error} // Exibe o estado de erro se houver
-                            helperText={error?.message} // Exibe a mensagem de erro da validação
-                            />
-                        )}
+
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={abaAtiva} onChange={(e, aba) => {
+                // Force re-render of everything when the active tab changes, updating react hook form state
+                updateTurmas(aba, { ...turmas[aba], nome: turmas[aba].nome });
+                
+                setAbaAtiva(aba)
+              }} aria-label="Abas das turmas">
+                {turmas.map((turma, index) => (
+                  <Tab label={turma.nome || `Turma ${index + 1}`} key={index} id={`turma-tab-${index}`} />
+                ))}
+              </Tabs>
+            </Box>
+
+            {turmas.map((turma, index) => (
+            <TabPanel value={abaAtiva} index={index} key={index}>
+              <Stack spacing={3}>
+                {/* Filtra e exibe apenas as disciplinas da turma atual */}
+                {disciplinas
+                  .map((field, globalIndex) => ({ ...field, globalIndex })) // Mantém o índice original
+                  .filter(field => field.turma === turma.nome)
+                  .map((disciplina) => (
+                    <Box key={disciplina.id}> {/* useFieldArray fornece um 'id' estável */}
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <TextField
+                          label="Nome da Disciplina"
+                          fullWidth
+                          {...register(`disciplinas.${disciplina.globalIndex}.nome`)}
                         />
-                    )}
-                    />
-                  <Stack direction="row" spacing={2} sx={{mt: 2}}>
-                    <TextField label="Aulas Semanais" type="number" fullWidth
-                        {...register(`disciplinas.${index}.aulas`, {
-                            valueAsNumber: true
-                        })}
-                    />
-                    <TextField label="Agrupar Aulas" type="number" fullWidth
-                        {...register(`disciplinas.${index}.agrupar`, {
-                            valueAsNumber: true
-                        })}
-                    />
-                   </Stack>
-                </Box>
-              ))}
-            </Stack>
-            <Button sx={{mt: 2}} onClick={() => addDisciplinas({ nome: '', turma: null, aulas: 2, agrupar: 2 })}>
+                        <TextField
+                          label="Aulas Semanais"
+                          type="number"
+                          sx={{ minWidth: 120 }}
+                          {...register(`disciplinas.${disciplina.globalIndex}.aulas`, {
+                            valueAsNumber: true,
+                          })}
+                        />
+                        {<TextField
+                          label="Agrupar"
+                          type="number"
+                          sx={{ minWidth: 120 }}
+                          {...register(`disciplinas.${disciplina.globalIndex}.agrupar`, {
+                            valueAsNumber: true,
+                          })}
+                        />}
+                        <IconButton
+                          onClick={() => removeDisciplinas(disciplina.globalIndex)}
+                          color="error"
+                        >
+                          
+                          <DeleteIcon />
+                        </IconButton>
+                      </Stack>
+                    </Box>
+                  ))}
+              </Stack>
+            </TabPanel>
+            ))}
+
+            <Button sx={{mt: 2}} onClick={() => {
+              const turmasArr = watch("turmas");
+              const turma = turmasArr[abaAtiva] ? turmasArr[abaAtiva].nome : null;
+              addDisciplinas({ nome: '', turma: turma, aulas: 2, agrupar: 0 })
+            }}>
               + Adicionar Nova Disciplina
             </Button>
           </CardContent>
@@ -459,6 +523,7 @@ function App() {
                 <Box sx={{textAlign: 'center', mt: 2}}>
                     <Typography>Processando... O horário está sendo gerado.</Typography>
                     <Typography variant="caption">Job ID: {jobId}</Typography>
+                    <Typography sx={{textAlign: "left"}}><pre>{JSON.stringify(isLoading, null, 2)}</pre></Typography>
                 </Box>
             )}
 
@@ -485,12 +550,12 @@ function App() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {Array.from({ length: QUANTIDADE_TEMPOS }, (_, i) => i).map(indexTempo => (
-                            <TableRow key={indexTempo}>
+                          {Array.from({ length: QUANTIDADE_TEMPOS * 2 }, (_, i) => i).map(_indexTempo => (
+                            <TableRow key={Math.floor(_indexTempo / 2)}>
                               {DIAS_SEMANA.map(dia => {
                                 const horarioDaTurma = resultado.horario;
                                 const diaInfo = horarioDaTurma?.find(h => h.dia === dia);
-                                const disciplina = diaInfo?.tempos[indexTempo];
+                                const disciplina = diaInfo?.tempos[Math.floor(_indexTempo / 2)];
                                 const professor = disciplina ? professoresDisciplinas[disciplina] : null;
                                 const cor = professor ? professoresCores[professor] : 'transparent';
                                 

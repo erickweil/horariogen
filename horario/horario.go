@@ -493,8 +493,20 @@ func (p *HorarioProcessor) podeDisciplina(idDisciplina int,idTurma int ,dia int,
 
 	// As aulas devem ser agrupadas de acordo com o especificado
 	// Regra só funciona no horário atual, depois tem que ver isso
+	if disciplina.Agrupar == 1 {
+		if p.getQuadroValor(idTurma,dia,tempo+1)-1 == idDisciplina ||
+		   p.getQuadroValor(idTurma,dia,tempo-1)-1 == idDisciplina {
+			return false
+		}
+	}
 	if disciplina.Agrupar == 2 {
-		if tempo == 0 || tempo == 2 {
+			 
+		if disciplina.contAulas > 0 && 
+		p.getQuadroValor(idTurma,dia,0)-1 != idDisciplina &&
+		p.getQuadroValor(idTurma,dia,1)-1 != idDisciplina {
+			return false
+		}
+		/*if tempo == 0 || tempo == 2 {
 			// Verifica se o tempo depois desse não é da mesma disciplina
 			_index := p.toQuadroIndex(idTurma,dia,tempo+1)
 			if p.quadro[_index] > 0 && p.quadro[_index]-1 != idDisciplina {
@@ -508,9 +520,9 @@ func (p *HorarioProcessor) podeDisciplina(idDisciplina int,idTurma int ,dia int,
 			if p.quadro[_index] > 0 && p.quadro[_index]-1 != idDisciplina {
 				return false
 			}
-		}
+		}*/
 
-		if tempo == 0 || tempo == 1 {
+		/*if tempo == 0 || tempo == 1 {
 			// Impedir que fique 4 seguidas
 			if p.getQuadroValor(idTurma,dia,3)-1 == idDisciplina &&
 			   p.getQuadroValor(idTurma,dia,4)-1 == idDisciplina {
@@ -522,16 +534,16 @@ func (p *HorarioProcessor) podeDisciplina(idDisciplina int,idTurma int ,dia int,
 				p.getQuadroValor(idTurma,dia,1)-1 == idDisciplina {
 				return false
 			}	
-		}
+		}*/
 	}
-	if disciplina.Agrupar == 4 && disciplina.contAulas > 0 {
+	/*if disciplina.Agrupar == 4 && disciplina.contAulas > 0 {
 		if p.getQuadroValor(idTurma,dia,0)-1 != idDisciplina &&
 		p.getQuadroValor(idTurma,dia,1)-1 != idDisciplina &&
 		p.getQuadroValor(idTurma,dia,2)-1 != idDisciplina &&
 		p.getQuadroValor(idTurma,dia,3)-1 != idDisciplina {
 			return false
 		}
-	}
+	}*/
 
 	// As disciplinas unidas devem ser escolhidas juntas
 	if len(disciplina.idDisciplinasUnidas) > 0 {
@@ -552,14 +564,14 @@ func (p *HorarioProcessor) podeDisciplina(idDisciplina int,idTurma int ,dia int,
 }
 
 // ExecHorario executa o solucionador para esta instância do processador.
-func (p *HorarioProcessor) ExecHorario() ([]int, error) {
+func (p *HorarioProcessor) ExecHorario(progressCallback func(int, int) error) ([]int, error) {
 	rand.Seed(time.Now().UnixNano())
 
 	fmt.Println("Iniciando solucionador de horário...")
 	defer utils.TimeTrack(time.Now(), "ExecHorario")
 
     // A função de regras agora é um método do nosso processador
-	iter, solved := pencilmark.SolucionarQuadro(p.quadro, len(p.disciplinas), p.regrasHorario)
+	iter, solved := pencilmark.SolucionarQuadro(p.quadro, len(p.disciplinas), p.regrasHorario, progressCallback)
 
 	if solved {
 		fmt.Println("Solucionado! Iterações:", iter)
@@ -571,7 +583,7 @@ func (p *HorarioProcessor) ExecHorario() ([]int, error) {
 	return p.quadro, nil
 }
 
-func ExecHorario(arquivoJson *ArquivoJson) ([]map[string]interface{}, error) {
+func ExecHorario(arquivoJson *ArquivoJson, progressCallback func(int, int) error) ([]map[string]interface{}, error) {
 	fmt.Println("Horario")
 
 	if (arquivoJson == nil) {
@@ -589,7 +601,7 @@ func ExecHorario(arquivoJson *ArquivoJson) ([]map[string]interface{}, error) {
 		return nil, fmt.Errorf("erro ao construir horario processor: %w", err)
 	}
 	
-	_, err = p.ExecHorario()
+	_, err = p.ExecHorario(progressCallback)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao executar horário: %w", err)
 	}
